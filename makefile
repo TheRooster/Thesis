@@ -9,4 +9,4 @@ install: thesis
 	mv ./thesis ./bin/thesis
 
 run:
-	./thesis
+	./bin/thesis
