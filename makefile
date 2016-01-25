@@ -8,7 +8,7 @@ install: thesis
 	mv ./thesis ./bin/thesis
 
 thesis: get
-	g++ $(cflags) -o thesis $(libs) src/*.cpp
+	g++ $(cflags) src/*.cpp -o thesis $(libs)
 
 get:
 	git pull
