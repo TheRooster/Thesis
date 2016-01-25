@@ -1,8 +1,8 @@
 #include <iostream>
 
 //include the opencv libraries
-#include "cv.h"
-#include "highgui.h"
+#include <cv.h>
+#include <highgui.h>
 
 
 using namespace std;
