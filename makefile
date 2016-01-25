@@ -8,7 +8,7 @@ install: thesis
 	mv ./thesis ./bin/thesis
 
 thesis: get
-	g++ src/*.cpp -o thesis $(cflags) $(libs)
+	g++ -o thesis src/*.cpp `pkg-config opencv  $(cflags) $(libs)
 
 get:
 	git pull
