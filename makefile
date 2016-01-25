@@ -1,8 +1,7 @@
 
-get:
-	git pull
 
-thesis:
+
+thesis: get
 	g++ -o thesis src/*.cpp
 
 install: thesis
@@ -10,3 +9,6 @@ install: thesis
 
 run:
 	./bin/thesis
+
+get:
+	git pull
