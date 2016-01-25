@@ -11,7 +11,7 @@ using namespace cv;
 
 int main(int argc, const char** argv)
 {
-	Mat img = imread("MyPic.JPG", CV_LOAD_IMAGE_UNCHANGED); //read the image data in the file "MyPic.JPG" and store it in 'img'
+	Mat img = imread("../res/Left01.jpg", CV_LOAD_IMAGE_UNCHANGED); //read the image data in the file "MyPic.JPG" and store it in 'img'
 
 	if (img.empty()) //check whether the image is loaded or not
 	{
