@@ -1,5 +1,12 @@
 
-all:
+get:
+	git pull
+
+thesis:
 	g++ -o thesis src/*.cpp
-install:
+
+install: thesis
 	mv ./thesis ./bin/thesis
+
+run:
+	./thesis
