@@ -1,5 +1,10 @@
 #include <iostream>
 
+//include the opencv libraries
+#include "cv.h"
+#include "highgui.h"
+
+
 using namespace std;
 
 int main() 
