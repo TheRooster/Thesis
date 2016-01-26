@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <ostream>
 #include <cstring>
 
 //include the opencv libraries
