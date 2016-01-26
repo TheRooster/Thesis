@@ -14,19 +14,48 @@ using namespace cv;
 int main(int argc, const char** argv)
 {
 	
-	Mat image;
-	image = imread("res/left01.jpg", CV_LOAD_IMAGE_COLOR);   // Read the file
-
-	if (!image.data)                              // Check for invalid input
+	//read settings file
+	Settings s;
+	const string inputSettingsFile = argc > 1 ? argv[1] : "default.xml";
+	FileStorage fs(inputSettingsFile, FileStorage::READ); // Read the settings
+	if (!fs.isOpened())
 	{
-		printf("Could not open or find the image\n");
+		printf("Could not open the configuration file: \"%s\"\n",inputSettingsFile);
+		return -1;
+	}
+	fs["Settings"] >> s;
+	fs.release();                                         // close Settings file
+
+	if (!s.goodInput)
+	{
+		printf("Invalid input detected. Application stopping. \n");
 		return -1;
 	}
 
-	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
-	imshow("Display window", image);                   // Show our image inside it.
+	//now we've got our settings loaded
+	//load in the images
+	for (int i = 0;; ++i)
+	{
+		Mat view;
+		bool blinkOutput = false;
 
-	waitKey(0);                                          // Wait for a keystroke in the window
-	return 0;
+		view = s.nextImage();
+
+		//-----  If no more image, or got enough, then stop calibration and show result -------------
+		if (mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames)
+		{
+			if (runCalibrationAndSave(s, imageSize, cameraMatrix, distCoeffs, imagePoints))
+				mode = CALIBRATED;
+			else
+				mode = DETECTION;
+		}
+		if (view.empty())          // If no more images then run calibration, save and stop loop.
+		{
+			if (imagePoints.size() > 0)
+				runCalibrationAndSave(s, imageSize, cameraMatrix, distCoeffs, imagePoints);
+			break;
+			imageSize = view.size();  // Format input image.
+			if (s.flipVertical)    flip(view, view, 0);
+		}
 }
 

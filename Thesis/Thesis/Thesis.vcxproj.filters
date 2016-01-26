@@ -21,5 +21,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\makefile" />
+    <Text Include="..\..\res\settings.xml">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
