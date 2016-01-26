@@ -1,4 +1,4 @@
-#include <ostream>
+#include <cstdio>
 #include <cstring>
 
 //include the opencv libraries
@@ -19,7 +19,7 @@ int main(int argc, const char** argv)
 
 	if (!image.data)                              // Check for invalid input
 	{
-		cout << "Could not open or find the image" << std::endl;
+		printf("Could not open or find the image\n");
 		return -1;
 	}
 
