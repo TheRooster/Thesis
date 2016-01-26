@@ -150,6 +150,10 @@
       <SubType>Designer</SubType>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\res\left_images.xml" />
+    <Xml Include="..\..\res\right_images.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

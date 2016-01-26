@@ -25,4 +25,12 @@
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\res\left_images.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+    <Xml Include="..\..\res\right_images.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>
