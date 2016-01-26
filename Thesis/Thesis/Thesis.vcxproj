@@ -74,19 +74,32 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\WINDOWS\OpenCV\opencv\build\include\opencv;D:\WINDOWS\OpenCV\opencv\build\include;D:\WINDOWS\OpenCV\opencv\build\include\opencv2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;C:\opencv\build\include;D:\WINDOWS\opencv\build\include\opencv;D:\WINDOWS\opencv\build\include;D:\WINDOWS\opencv\build\include\opencv2</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\WINDOWS\OpenCV\opencv\build\x64\vc14\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world310.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;D:\WINDOWS\opencv\build\x86\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;C:\opencv\build\include;D:\WINDOWS\OpenCV\opencv\build\include\opencv;D:\WINDOWS\OpenCV\opencv\build\include;D:\WINDOWS\OpenCV\opencv\build\include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;D:\WINDOWS\OpenCV\opencv\build\x64\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -95,14 +108,19 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\WINDOWS\OpenCV\opencv\build\include\opencv;D:\WINDOWS\OpenCV\opencv\build\include;D:\WINDOWS\OpenCV\opencv\build\include\opencv2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;C:\opencv\build\include;D:\WINDOWS\opencv\build\include\opencv;D:\WINDOWS\opencv\build\include;D:\WINDOWS\opencv\build\include\opencv2</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\WINDOWS\OpenCV\opencv\build\x64\vc14\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world310.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;D:\WINDOWS\opencv\build\x86\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -111,11 +129,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;C:\opencv\build\include;D:\WINDOWS\OpenCV\opencv\build\include\opencv;D:\WINDOWS\OpenCV\opencv\build\include;D:\WINDOWS\OpenCV\opencv\build\include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;D:\WINDOWS\OpenCV\opencv\build\x64\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp" />
