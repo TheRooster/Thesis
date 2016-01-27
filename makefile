@@ -18,3 +18,6 @@ thesis: get
 
 get:
 	git pull
+
+debug: get
+	g++ -g -o thesis src/stereo_calibrate.cpp $(cflags) $(libs)
