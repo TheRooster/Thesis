@@ -27,6 +27,7 @@ static void help()
 		<< "Near the sample file you'll find the configuration file, which has detailed help of "
 		"how to edit it.  It may be any OpenCV supported file format XML/YAML." << endl;
 }
+
 class Settings
 {
 public:
@@ -230,6 +231,8 @@ enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
 
 bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat& distCoeffs,
 	vector<vector<Point2f> > imagePoints);
+
+
 int main(int argc, char* argv[])
 {
 	help();
@@ -464,6 +467,7 @@ static double computeReprojectionErrors(const vector<vector<Point3f> >& objectPo
 
 	return std::sqrt(totalErr / totalPoints);
 }
+
 //! [compute_errors]
 //! [board_corners]
 static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Point3f>& corners,
