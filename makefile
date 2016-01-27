@@ -11,7 +11,7 @@ install: thesis
 	mv ./thesis ./bin/thesis
 
 thesis: get
-	g++ -o thesis src/stere_match.cpp  $(cflags) $(libs)
+	g++ -o thesis src/stereo_match.cpp  $(cflags) $(libs)
 
 get:
 	git pull
