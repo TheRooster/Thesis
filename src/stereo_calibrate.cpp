@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
 	//we know the images are the same size, now find the chessboard corners in the first image
 	//an array of arrays of points for the left camera, one array per image
-	vector<vector<Point2f>> camera1ImagePoints(2);
+	vector<vector<Point2f> > camera1ImagePoints(2);
 	bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
 	if (!found)
 	{
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//now the same for the right camera
-	vector<vector<Point2f>> camera2ImagePoints(2);
+	vector<vector<Point2f> > camera2ImagePoints(2);
 	found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
 	if (!found)
 	{
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
 
 
 	//initialize our fake 3D coordinate system, one for each set of images
-	vector<vector<Point3f>> objectPoints(2);
+	vector<vector<Point3f> > objectPoints(2);
 	//both are identical, because we're using the same chessboard in each
 	objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
 	objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
@@ -122,18 +122,17 @@ int main(int argc, char *argv[]) {
 	Mat fundamentalMatrix;
 
 	double error = stereoCalibrate(objectPoints, camera1ImagePoints, camera2ImagePoints,
-									cameraMatrices[0], distortionCoefficients[0],
-									cameraMatrices[1], distortionCoefficients[1],
-									imSize, rotationMatrix, translationVector, 
-									essentialMatrix, fundamentalMatrix,
-									TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 100, 1e-5), //Termination Criteria
-									CV_CALIB_FIX_ASPECT_RATIO + 
-									CV_CALIB_ZERO_TANGENT_DIST + 
-									CV_CALIB_SAME_FOCAL_LENGTH + 
-									CV_CALIB_RATIONAL_MODEL +
-									CV_CALIB_FIX_K3 + 
-									CV_CALIB_FIX_K4 +
-									CV_CALIB_FIX_K5);
+		cameraMatrices[0], distortionCoefficients[0],
+		cameraMatrices[1], distortionCoefficients[1],
+		imSize, rotationMatrix, translationVector,
+		essentialMatrix, fundamentalMatrix,
+		CV_CALIB_FIX_ASPECT_RATIO +
+		CV_CALIB_ZERO_TANGENT_DIST +
+		CV_CALIB_SAME_FOCAL_LENGTH +
+		CV_CALIB_RATIONAL_MODEL +
+		CV_CALIB_FIX_K3 +
+		CV_CALIB_FIX_K4 +
+		CV_CALIB_FIX_K5, TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 100, 1e-5)); //Termination Criteria (Why move this between 2.4 and 3.0?)
 
 
 
