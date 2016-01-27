@@ -140,12 +140,11 @@ int main(int argc, char *argv[]) {
 		Mat3f rotationMatrices[2];
 		Matx34f projectionMatrices[2];
 		Mat4f disparityToDepth;
-		Rect roi1, roi2;//valid regions within the images
 
 		//now we have the right parameters to rectify the images
 		stereoRectify(cameraMatrices[0], distortionCoefficients[0], cameraMatrices[1], distortionCoefficients[1],
 			imSize, rotationMatrix, translationVector, rotationMatrices[0], rotationMatrices[1], projectionMatrices[0], projectionMatrices[1],
-			disparityToDepth, 0, 0, cvSize(0, 0), &roi1, &roi2);
+			disparityToDepth, 0, 0, cvSize(0, 0));
 
 		//now that we've generated the rectification transforms for the images, let's rectify them
 		Mat map11, map12, map21, map22;
@@ -161,8 +160,8 @@ int main(int argc, char *argv[]) {
 		Ptr<StereoBM> bm = StereoBM::create(16, 9); //create the StereoBM Object
 
 		//init some parameters
-		bm->setROI1(roi1); //usable area in rectified image
-		bm->setROI2(roi2);
+		//bm->setROI1(); //usable area in rectified image
+		//bm->setROI2(roi2);
 		bm->setPreFilterCap(31);
 		bm->setBlockSize(9); //block size to check
 		bm->setMinDisparity(0);
