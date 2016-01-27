@@ -9,11 +9,12 @@ run: install
 
 calib:
 	g++ -o camera_calib src/main.cpp  $(cflags) $(libs) 
+
 install: thesis
 	mv ./thesis ./bin/thesis
 
 thesis: get
-	g++ -o thesis src/stereo_match.cpp  $(cflags) $(libs)
+	g++ -o thesis src/stereo_calibrate.cpp  $(cflags) $(libs)
 
 get:
 	git pull
