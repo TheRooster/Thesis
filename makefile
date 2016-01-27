@@ -7,6 +7,8 @@ libs = -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_imgcodecs -lopen
 run: install
 	./bin/thesis
 
+calib:
+	g++ -o camera_calib src/main.cpp  $(cflags) $(libs) 
 install: thesis
 	mv ./thesis ./bin/thesis
 
