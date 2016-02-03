@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
 		//bm->setROI1(); //usable area in rectified image
 		//bm->setROI2(roi2);
 		bm->setPreFilterCap(31);
-		bm->setBlockSize(9); //block size to check
+		bm->setBlockSize(15); //block size to check
 		bm->setMinDisparity(0);
 		bm->setNumDisparities(16); //number of disparities
 		bm->setTextureThreshold(10);
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 		bm->compute(img1rectified, img2rectified, disp);
 
 		//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
-		//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
+		disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
 
 		//lets show the images
 		namedWindow("left", 1);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
 		namedWindow("right", 1);
 		imshow("right", img2rectified);
 		namedWindow("disparity", 0);
-		imshow("disparity", disp);
+		imshow("disparity", disp8);
 		printf("press any key to continue...");
 		fflush(stdout);
 		waitKey();
