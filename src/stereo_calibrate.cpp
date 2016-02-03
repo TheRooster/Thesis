@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 		bm->compute(img1rectified, img2rectified, disp);
 
 		//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
-		disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
+		//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
 
 		//lets show the images
 		namedWindow("left", 1);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
 		namedWindow("right", 1);
 		imshow("right", img2rectified);
 		namedWindow("disparity", 0);
-		imshow("disparity", disp8);
+		imshow("disparity", disp);
 		printf("press any key to continue...");
 		fflush(stdout);
 		waitKey();
