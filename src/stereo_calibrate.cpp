@@ -137,9 +137,9 @@ int main(int argc, char *argv[]) {
 
 
 
-		Mat3f rotationMatrices[2];
-		Matx34f projectionMatrices[2];
-		Mat4f disparityToDepth;
+		Mat rotationMatrices[2];
+		Mat projectionMatrices[2];
+		Mat disparityToDepth;
 
 		//now we have the right parameters to rectify the images
 		stereoRectify(cameraMatrices[0], distortionCoefficients[0], cameraMatrices[1], distortionCoefficients[1],
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
 		Mat img1rectified, img2rectified;
 		remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
-
+		
 		//now we have rectified images in img1rectified and img2rectified
 		//lets generate a disparity map using Stereo Block Matching
 		Ptr<StereoBM> bm = StereoBM::create(16, 9); //create the StereoBM Object
