@@ -152,8 +152,8 @@ int main(int argc, char *argv[]) {
 		initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
 		Mat img1rectified, img2rectified;
-		remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
-		remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
+		remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
+		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 		
 		//now we have rectified images in img1rectified and img2rectified
 		//lets generate a disparity map using Stereo Block Matching
