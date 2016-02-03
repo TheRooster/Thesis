@@ -35,10 +35,10 @@ int main(int argc, char *argv[]) {
 		const float squareSize = 1.0f;
 
 		//read the images into openCV matrices
-		Mat camera1image1 = imread(camera1image1fn, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
-		Mat camera1image2 = imread(camera1image2fn, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
-		Mat camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
-		Mat camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
+		Mat camera1image1 = imread(camera1image1fn, CV_LOAD_IMAGE_UNCHANGED);
+		Mat camera1image2 = imread(camera1image2fn, CV_LOAD_IMAGE_UNCHANGED);
+		Mat camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_UNCHANGED);
+		Mat camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_UNCHANGED);
 
 		Size imSize = camera1image1.size();
 
