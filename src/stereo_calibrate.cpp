@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
 		//initialize our fake 3D coordinate system, one for each set of images
 		vector<vector<Point3f> > objectPoints(2);
 
-		/*//my experimental points
+		//my experimental points
 		objectPoints[0].push_back(Point3f(0, 0, 0));
 		objectPoints[0].push_back(Point3f(0, 15, 0));
 		objectPoints[0].push_back(Point3f(0, 30, 0));
@@ -247,10 +247,10 @@ int main(int argc, char *argv[]) {
 		//camera2ImagePoints[1].push_back(Point2f(100, 130));
 
 
-		*/
+		
 		//both are identical, because we're using the same chessboard in each
-		objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
-		objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
+		//objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
+		//objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
 
 		//init the initial camera matrices
 		Mat cameraMatrices[2];
