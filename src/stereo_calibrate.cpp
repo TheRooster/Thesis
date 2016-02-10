@@ -26,10 +26,15 @@ int main(int argc, char *argv[]) {
 		Size boardSize(6, 9);
 
 		//read in the image files
-		string camera1image1fn = "res/left01.jpg";
+		/*string camera1image1fn = "res/left01.jpg";
 		string camera1image2fn = "res/left02.jpg";
 		string camera2image1fn = "res/right01.jpg";
 		string camera2image2fn = "res/right02.jpg";
+		*/
+		string camera1image1fn = "res/myLeft01.jpg";
+		string camera1image2fn = "res/myLeft01.jpg";
+		string camera2image1fn = "res/myRight01.jpg";
+		string camera2image2fn = "res/myRight01.jpg";
 
 
 		const float squareSize = 1.0f;
@@ -52,7 +57,7 @@ int main(int argc, char *argv[]) {
 		//we know the images are the same size, now find the chessboard corners in the first image
 		//an array of arrays of points for the left camera, one array per image
 		vector<vector<Point2f> > camera1ImagePoints(2);
-		bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
+		/*bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
 		if (!found)
 		{
 			cerr << "Corners not found in image 1,1" << endl;
@@ -65,10 +70,10 @@ int main(int argc, char *argv[]) {
 			cerr << "Corners not found in image 1,2" << endl;
 			exit(-1);
 		}
-		
+		*/
 		//now the same for the right camera
 		vector<vector<Point2f> > camera2ImagePoints(2);
-		found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
+		/*found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
 		if (!found)
 		{
 			cerr << "Corners not found in image 2,1" << endl;
@@ -88,7 +93,7 @@ int main(int argc, char *argv[]) {
 		namedWindow("Corners12", 1);
 		namedWindow("Corners21", 1);
 		namedWindow("Corners22", 1);
-
+		
 
 		drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
 		imshow("Corners11", camera1image1);
@@ -102,7 +107,7 @@ int main(int argc, char *argv[]) {
 		drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
 		imshow("Corners22", camera2image2);
 
-
+		*/
 		//initialize our fake 3D coordinate system, one for each set of images
 		vector<vector<Point3f> > objectPoints(2);
 
