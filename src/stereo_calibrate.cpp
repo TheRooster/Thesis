@@ -124,9 +124,9 @@ int main(int argc, char *argv[]) {
 		objectPoints[0].push_back(Point3f(45, 45, 0));
 		objectPoints[0].push_back(Point3f(60, 0, 0));
 		objectPoints[0].push_back(Point3f(60, 30, 0));
-		objectPoints[0].push_back(Point3f(60, 0, 10));
-		objectPoints[0].push_back(Point3f(30,55,30));
-		objectPoints[0].push_back(Point3f(15, 55, 30));
+		//objectPoints[0].push_back(Point3f(60, 0, 10));
+		//objectPoints[0].push_back(Point3f(30,55,30));
+		//objectPoints[0].push_back(Point3f(15, 55, 30));
 
 
 		objectPoints[1].push_back(Point3f(0, 0, 0));
@@ -146,9 +146,9 @@ int main(int argc, char *argv[]) {
 		objectPoints[1].push_back(Point3f(45, 45, 0));
 		objectPoints[1].push_back(Point3f(60, 0, 0));
 		objectPoints[1].push_back(Point3f(60, 30, 0));
-		objectPoints[1].push_back(Point3f(60, 0, 10));
-		objectPoints[1].push_back(Point3f(30, 55, 30));
-		objectPoints[1].push_back(Point3f(15, 55, 30));
+		//objectPoints[1].push_back(Point3f(60, 0, 10));
+		//objectPoints[1].push_back(Point3f(30, 55, 30));
+		//objectPoints[1].push_back(Point3f(15, 55, 30));
 
 
 
@@ -169,9 +169,9 @@ int main(int argc, char *argv[]) {
 		camera1ImagePoints[0].push_back(Point2f(1160, 1560));
 		camera1ImagePoints[0].push_back(Point2f(1360, 3160));
 		camera1ImagePoints[0].push_back(Point2f(1160, 2160));
-		camera1ImagePoints[0].push_back(Point2f(1000, 3220));
-		camera1ImagePoints[0].push_back(Point2f(140, 940));
-		camera1ImagePoints[0].push_back(Point2f(60, 180));
+		//camera1ImagePoints[0].push_back(Point2f(1000, 3220));
+		//camera1ImagePoints[0].push_back(Point2f(140, 940));
+		//camera1ImagePoints[0].push_back(Point2f(60, 180));
 
 
 		camera1ImagePoints[1].push_back(Point2f(2440, 1180));
@@ -191,9 +191,9 @@ int main(int argc, char *argv[]) {
 		camera1ImagePoints[1].push_back(Point2f(1160, 1560));
 		camera1ImagePoints[1].push_back(Point2f(1360, 3160));
 		camera1ImagePoints[1].push_back(Point2f(1160, 2160));
-		camera1ImagePoints[1].push_back(Point2f(1000, 3220));
-		camera1ImagePoints[1].push_back(Point2f(140, 940));
-		camera1ImagePoints[1].push_back(Point2f(60, 180));
+		//camera1ImagePoints[1].push_back(Point2f(1000, 3220));
+		//camera1ImagePoints[1].push_back(Point2f(140, 940));
+		//camera1ImagePoints[1].push_back(Point2f(60, 180));
 
 
 
@@ -216,9 +216,9 @@ int main(int argc, char *argv[]) {
 		camera2ImagePoints[0].push_back(Point2f(1140, 1560));
 		camera2ImagePoints[0].push_back(Point2f(1300, 3180));
 		camera2ImagePoints[0].push_back(Point2f(1130, 2160));
-		camera2ImagePoints[0].push_back(Point2f(940, 3200));
-		camera2ImagePoints[0].push_back(Point2f(160, 900));
-		camera2ImagePoints[0].push_back(Point2f(100, 130));
+		//camera2ImagePoints[0].push_back(Point2f(940, 3200));
+		//camera2ImagePoints[0].push_back(Point2f(160, 900));
+		//camera2ImagePoints[0].push_back(Point2f(100, 130));
 
 		camera2ImagePoints[1].push_back(Point2f(2440, 1300));
 		camera2ImagePoints[1].push_back(Point2f(1960, 600));
@@ -237,9 +237,9 @@ int main(int argc, char *argv[]) {
 		camera2ImagePoints[1].push_back(Point2f(1140, 1560));
 		camera2ImagePoints[1].push_back(Point2f(1300, 3180));
 		camera2ImagePoints[1].push_back(Point2f(1130, 2160));
-		camera2ImagePoints[1].push_back(Point2f(940, 3200));
-		camera2ImagePoints[1].push_back(Point2f(160, 900));
-		camera2ImagePoints[1].push_back(Point2f(100, 130));
+		//camera2ImagePoints[1].push_back(Point2f(940, 3200));
+		//camera2ImagePoints[1].push_back(Point2f(160, 900));
+		//camera2ImagePoints[1].push_back(Point2f(100, 130));
 
 
 
