@@ -323,7 +323,7 @@ int main(int argc, char *argv[]) {
 		//namedWindow("right", 1);
 		//imshow("right", img2rectified);
 		namedWindow("disparity", 0);
-		imshow("disparity", disp);
+		imshow("disparity", disp8);
 		printf("press any key to continue...");
 		fflush(stdout);
 		waitKey();
