@@ -26,10 +26,10 @@ int main(int argc, char *argv[]) {
 		Size boardSize(6, 9);
 
 		//read in the image files
-		string camera1image1fn = "res/left01.jpg";
-		string camera1image2fn = "res/left02.jpg";
-		string camera2image1fn = "res/right01.jpg";
-		string camera2image2fn = "res/right02.jpg";
+		string camera1image1fn = "res/myLeft01.jpg";
+		string camera1image2fn = "res/myLeft01.jpg";
+		string camera2image1fn = "res/myRight01.jpg";
+		string camera2image2fn = "res/myRight01.jpg";
 
 
 		const float squareSize = 1.0f;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 		//we know the images are the same size, now find the chessboard corners in the first image
 		//an array of arrays of points for the left camera, one array per image
 		vector<vector<Point2f> > camera1ImagePoints(2);
-		bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
+		/*bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
 		if (!found)
 		{
 			cerr << "Corners not found in image 1,1" << endl;
@@ -65,10 +65,10 @@ int main(int argc, char *argv[]) {
 			cerr << "Corners not found in image 1,2" << endl;
 			exit(-1);
 		}
-
+		*/
 		//now the same for the right camera
 		vector<vector<Point2f> > camera2ImagePoints(2);
-		found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
+		/*found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
 		if (!found)
 		{
 			cerr << "Corners not found in image 2,1" << endl;
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 			cerr << "Corners not found in image 2,2" << endl;
 			exit(-1);
 		}
-
+		*/
 
 		//display the images with the corners drawn on them, this is just a sanity check
 		namedWindow("Corners11", 1);
@@ -105,9 +105,147 @@ int main(int argc, char *argv[]) {
 
 		//initialize our fake 3D coordinate system, one for each set of images
 		vector<vector<Point3f> > objectPoints(2);
+
+		//my experimental points
+		objectPoints[0].push_back(Point3f(0, 0, 0));
+		objectPoints[0].push_back(Point3f(0, 15, 0));
+		objectPoints[0].push_back(Point3f(0, 30, 0));
+		objectPoints[0].push_back(Point3f(15, 0, 0));
+		objectPoints[0].push_back(Point3f(15, 15, 0));
+		objectPoints[0].push_back(Point3f(15, 30, 0));
+		objectPoints[0].push_back(Point3f(15, 45, 0));
+		objectPoints[0].push_back(Point3f(30, 0, 0));
+		objectPoints[0].push_back(Point3f(30, 15, 0));
+		objectPoints[0].push_back(Point3f(30, 30, 0));
+		objectPoints[0].push_back(Point3f(30, 45, 0));
+		objectPoints[0].push_back(Point3f(45, 0, 0));
+		objectPoints[0].push_back(Point3f(45, 15, 0));
+		objectPoints[0].push_back(Point3f(45, 30, 0));
+		objectPoints[0].push_back(Point3f(45, 45, 0));
+		objectPoints[0].push_back(Point3f(60, 0, 0));
+		objectPoints[0].push_back(Point3f(60, 30, 0));
+		objectPoints[0].push_back(Point3f(60, 0, 10));
+		objectPoints[0].push_back(Point3f(30,55,30));
+		objectPoints[0].push_back(Point3f(15, 55, 30));
+
+
+		objectPoints[1].push_back(Point3f(0, 0, 0));
+		objectPoints[1].push_back(Point3f(0, 15, 0));
+		objectPoints[1].push_back(Point3f(0, 30, 0));
+		objectPoints[1].push_back(Point3f(15, 0, 0));
+		objectPoints[1].push_back(Point3f(15, 15, 0));
+		objectPoints[1].push_back(Point3f(15, 30, 0));
+		objectPoints[1].push_back(Point3f(15, 45, 0));
+		objectPoints[1].push_back(Point3f(30, 0, 0));
+		objectPoints[1].push_back(Point3f(30, 15, 0));
+		objectPoints[1].push_back(Point3f(30, 30, 0));
+		objectPoints[1].push_back(Point3f(30, 45, 0));
+		objectPoints[1].push_back(Point3f(45, 0, 0));
+		objectPoints[1].push_back(Point3f(45, 15, 0));
+		objectPoints[1].push_back(Point3f(45, 30, 0));
+		objectPoints[1].push_back(Point3f(45, 45, 0));
+		objectPoints[1].push_back(Point3f(60, 0, 0));
+		objectPoints[1].push_back(Point3f(60, 30, 0));
+		objectPoints[1].push_back(Point3f(60, 0, 10));
+		objectPoints[1].push_back(Point3f(30, 55, 30));
+		objectPoints[1].push_back(Point3f(15, 55, 30));
+
+
+
+		camera1ImagePoints[0].push_back(Point2f(2440, 1180));
+		camera1ImagePoints[0].push_back(Point2f(1940, 520));
+		camera1ImagePoints[0].push_back(Point2f(1640, 160));
+		camera1ImagePoints[0].push_back(Point2f(1980, 2040));
+		camera1ImagePoints[0].push_back(Point2f(1660, 1360));
+		camera1ImagePoints[0].push_back(Point2f(1480, 900));
+		camera1ImagePoints[0].push_back(Point2f(1340, 600));
+		camera1ImagePoints[0].push_back(Point2f(1700, 2640));
+		camera1ImagePoints[0].push_back(Point2f(1480, 1860));
+		camera1ImagePoints[0].push_back(Point2f(1340, 1480));
+		camera1ImagePoints[0].push_back(Point2f(1240, 1140));
+		camera1ImagePoints[0].push_back(Point2f(1500, 3000));
+		camera1ImagePoints[0].push_back(Point2f(1340, 2280));
+		camera1ImagePoints[0].push_back(Point2f(1240, 1900));
+		camera1ImagePoints[0].push_back(Point2f(1160, 1560));
+		camera1ImagePoints[0].push_back(Point2f(1360, 3160));
+		camera1ImagePoints[0].push_back(Point2f(1160, 2160));
+		camera1ImagePoints[0].push_back(Point2f(1000, 3220));
+		camera1ImagePoints[0].push_back(Point2f(140, 940));
+		camera1ImagePoints[0].push_back(Point2f(60, 180));
+
+
+		camera1ImagePoints[1].push_back(Point2f(2440, 1180));
+		camera1ImagePoints[1].push_back(Point2f(1940, 520));
+		camera1ImagePoints[1].push_back(Point2f(1640, 160));
+		camera1ImagePoints[1].push_back(Point2f(1980, 2040));
+		camera1ImagePoints[1].push_back(Point2f(1660, 1360));
+		camera1ImagePoints[1].push_back(Point2f(1480, 900));
+		camera1ImagePoints[1].push_back(Point2f(1340, 600));
+		camera1ImagePoints[1].push_back(Point2f(1700, 2640));
+		camera1ImagePoints[1].push_back(Point2f(1480, 1860));
+		camera1ImagePoints[1].push_back(Point2f(1340, 1480));
+		camera1ImagePoints[1].push_back(Point2f(1240, 1140));
+		camera1ImagePoints[1].push_back(Point2f(1500, 3000));
+		camera1ImagePoints[1].push_back(Point2f(1340, 2280));
+		camera1ImagePoints[1].push_back(Point2f(1240, 1900));
+		camera1ImagePoints[1].push_back(Point2f(1160, 1560));
+		camera1ImagePoints[1].push_back(Point2f(1360, 3160));
+		camera1ImagePoints[1].push_back(Point2f(1160, 2160));
+		camera1ImagePoints[1].push_back(Point2f(1000, 3220));
+		camera1ImagePoints[1].push_back(Point2f(140, 940));
+		camera1ImagePoints[1].push_back(Point2f(60, 180));
+
+
+
+
+
+		camera2ImagePoints[0].push_back(Point2f(2440, 1300));
+		camera2ImagePoints[0].push_back(Point2f(1960, 600));
+		camera2ImagePoints[0].push_back(Point2f(1700, 220));
+		camera2ImagePoints[0].push_back(Point2f(1960, 2140));
+		camera2ImagePoints[0].push_back(Point2f(1660, 1400));
+		camera2ImagePoints[0].push_back(Point2f(1500, 840));
+		camera2ImagePoints[0].push_back(Point2f(1360, 620));
+		camera2ImagePoints[0].push_back(Point2f(1660, 2680));
+		camera2ImagePoints[0].push_back(Point2f(1460, 1900));
+		camera2ImagePoints[0].push_back(Point2f(1340, 1480));
+		camera2ImagePoints[0].push_back(Point2f(1240, 1160));
+		camera2ImagePoints[0].push_back(Point2f(1420, 3000));
+		camera2ImagePoints[0].push_back(Point2f(1320, 2300));
+		camera2ImagePoints[0].push_back(Point2f(1220, 1900));
+		camera2ImagePoints[0].push_back(Point2f(1140, 1560));
+		camera2ImagePoints[0].push_back(Point2f(1300, 3180));
+		camera2ImagePoints[0].push_back(Point2f(1130, 2160));
+		camera2ImagePoints[0].push_back(Point2f(940, 3200));
+		camera2ImagePoints[0].push_back(Point2f(160, 900));
+		camera2ImagePoints[0].push_back(Point2f(100, 130));
+
+		camera2ImagePoints[1].push_back(Point2f(2440, 1300));
+		camera2ImagePoints[1].push_back(Point2f(1960, 600));
+		camera2ImagePoints[1].push_back(Point2f(1700, 220));
+		camera2ImagePoints[1].push_back(Point2f(1960, 2140));
+		camera2ImagePoints[1].push_back(Point2f(1660, 1400));
+		camera2ImagePoints[1].push_back(Point2f(1500, 840));
+		camera2ImagePoints[1].push_back(Point2f(1360, 620));
+		camera2ImagePoints[1].push_back(Point2f(1660, 2680));
+		camera2ImagePoints[1].push_back(Point2f(1460, 1900));
+		camera2ImagePoints[1].push_back(Point2f(1340, 1480));
+		camera2ImagePoints[1].push_back(Point2f(1240, 1160));
+		camera2ImagePoints[1].push_back(Point2f(1420, 3000));
+		camera2ImagePoints[1].push_back(Point2f(1320, 2300));
+		camera2ImagePoints[1].push_back(Point2f(1220, 1900));
+		camera2ImagePoints[1].push_back(Point2f(1140, 1560));
+		camera2ImagePoints[1].push_back(Point2f(1300, 3180));
+		camera2ImagePoints[1].push_back(Point2f(1130, 2160));
+		camera2ImagePoints[1].push_back(Point2f(940, 3200));
+		camera2ImagePoints[1].push_back(Point2f(160, 900));
+		camera2ImagePoints[1].push_back(Point2f(100, 130));
+
+
+
 		//both are identical, because we're using the same chessboard in each
-		objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
-		objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
+		//objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
+		//objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
 
 		//init the initial camera matrices
 		Mat cameraMatrices[2];
