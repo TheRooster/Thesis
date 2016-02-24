@@ -308,15 +308,16 @@ int main(int argc, char *argv[]) {
 		//init some parameters
 		//bm->setROI1(); //usable area in rectified image
 		//bm->setROI2(roi2);
-		bm->setPreFilterCap(31);
-		bm->setBlockSize(11); //block size to check
-		bm->setMinDisparity(0);
-		bm->setNumDisparities(16); //number of disparities
-		bm->setTextureThreshold(10);
-		bm->setUniquenessRatio(15);
-		bm->setSpeckleWindowSize(100);
-		bm->setSpeckleRange(32);
-		bm->setDisp12MaxDiff(1);
+		bm->setPreFilterCap(61);
+		bm->setPreFilterSize(5);
+		bm->setBlockSize(9); //block size to check
+		bm->setMinDisparity(-39);
+		bm->setNumDisparities(112); //number of disparities
+		//bm->setTextureThreshold(10);
+		//bm->setUniquenessRatio(15);
+		//bm->setSpeckleWindowSize(100);
+		//bm->setSpeckleRange(32);
+		//bm->setDisp12MaxDiff(1);
 
 
 		Mat disp, disp8;
