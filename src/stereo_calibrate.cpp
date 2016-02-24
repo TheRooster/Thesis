@@ -27,17 +27,17 @@ int main(int argc, char *argv[]) {
 		Size boardSize(6, 9);
 
 		//read in the image files
-		/*string camera1image1fn = "res/left01.jpg";
+		string camera1image1fn = "res/left01.jpg";
 		string camera1image2fn = "res/left02.jpg";
 		string camera2image1fn = "res/right01.jpg";
 		string camera2image2fn = "res/right02.jpg";
-		*/
 		
+		/*
 		string camera1image1fn = "res/myLeft01.jpg";
 		string camera1image2fn = "res/myLeft01.jpg";
 		string camera2image1fn = "res/myRight01.jpg";
 		string camera2image2fn = "res/myRight01.jpg";
-		
+		*/
 
 		const float squareSize = 1.0f;
 
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 		Mat camera1image2 = imread(camera1image2fn, CV_LOAD_IMAGE_GRAYSCALE);
 		Mat camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_GRAYSCALE);
 		Mat camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_GRAYSCALE);
-		
+
 		Size imSize = camera1image1.size();
 
 		//check that the sizes of the images are the same
@@ -97,23 +97,23 @@ int main(int argc, char *argv[]) {
 		//namedWindow("Corners22", 1);
 		
 
-		//drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
+		drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
 		//imshow("Corners11", camera1image1);
 
-		//drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
+		drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
 		//imshow("Corners12", camera1image2);
 
-		//drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
+		drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
 		//imshow("Corners21", camera2image1);
 
-		//drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
+		drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
 		//imshow("Corners22", camera2image2);
 
 		
 		//initialize our fake 3D coordinate system, one for each set of images
 		vector<vector<Point3f> > objectPoints(2);
 
-		
+		/*
 		//my experimental points
 		objectPoints[0].push_back(Point3f(0, 0, 0));
 		objectPoints[0].push_back(Point3f(0, 15, 0));
@@ -249,12 +249,12 @@ int main(int argc, char *argv[]) {
 		//camera2ImagePoints[1].push_back(Point2f(160, 900));
 		//camera2ImagePoints[1].push_back(Point2f(100, 130));
 
-		/*
+		*/
 		
 		//both are identical, because we're using the same chessboard in each
 		objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
 		objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
-		*/
+
 		//init the initial camera matrices
 		Mat cameraMatrices[2];
 		cameraMatrices[0] = Mat::eye(3, 3, CV_64F); //3x3 identity matrix of 64bit floating point numbers(doubles)
@@ -308,11 +308,10 @@ int main(int argc, char *argv[]) {
 		//init some parameters
 		//bm->setROI1(); //usable area in rectified image
 		//bm->setROI2(roi2);
-		bm->setPreFilterCap(61);
-		bm->setPreFilterSize(5);
+		bm->setPreFilterCap(31);
 		bm->setBlockSize(9); //block size to check
 		bm->setMinDisparity(-39);
-		bm->setNumDisparities(64); //number of disparities
+		bm->setNumDisparities(112); //number of disparities
 		//bm->setTextureThreshold(10);
 		//bm->setUniquenessRatio(15);
 		//bm->setSpeckleWindowSize(100);
