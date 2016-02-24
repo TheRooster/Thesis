@@ -315,7 +315,7 @@ int main(int argc, char *argv[]) {
 		//bm->setTextureThreshold(10);
 		//bm->setUniquenessRatio(15);
 		//bm->setSpeckleWindowSize(100);
-		//bm->setSpeckleRange(32);
+		bm->setSpeckleRange(8);
 		//bm->setDisp12MaxDiff(1);
 
 
