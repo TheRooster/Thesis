@@ -309,7 +309,7 @@ int main(int argc, char *argv[]) {
 		//bm->setROI1(); //usable area in rectified image
 		//bm->setROI2(roi2);
 		bm->setPreFilterCap(31);
-		bm->setBlockSize(9); //block size to check
+		bm->setBlockSize(27); //block size to check
 		bm->setMinDisparity(-50);
 		bm->setNumDisparities(256); //number of disparities
 		//bm->setTextureThreshold(10);
