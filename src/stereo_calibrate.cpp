@@ -97,16 +97,16 @@ int main(int argc, char *argv[]) {
 		//namedWindow("Corners22", 1);
 		
 
-		drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
+		//drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
 		//imshow("Corners11", camera1image1);
 
-		drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
+		//drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
 		//imshow("Corners12", camera1image2);
 
-		drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
+		//drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
 		//imshow("Corners21", camera2image1);
 
-		drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
+		//drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
 		//imshow("Corners22", camera2image2);
 
 		
@@ -310,7 +310,7 @@ int main(int argc, char *argv[]) {
 		//bm->setROI2(roi2);
 		bm->setPreFilterCap(31);
 		bm->setBlockSize(9); //block size to check
-		bm->setMinDisparity(-39);
+		bm->setMinDisparity(-139);
 		bm->setNumDisparities(112); //number of disparities
 		//bm->setTextureThreshold(10);
 		//bm->setUniquenessRatio(15);
