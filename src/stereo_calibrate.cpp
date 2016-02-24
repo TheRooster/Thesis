@@ -91,10 +91,10 @@ int main(int argc, char *argv[]) {
 		
 
 		//display the images with the corners drawn on them, this is just a sanity check
-		namedWindow("Corners11", 1);
-		namedWindow("Corners12", 1);
-		namedWindow("Corners21", 1);
-		namedWindow("Corners22", 1);
+		//namedWindow("Corners11", 1);
+		//namedWindow("Corners12", 1);
+		//namedWindow("Corners21", 1);
+		//namedWindow("Corners22", 1);
 		
 
 		drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
