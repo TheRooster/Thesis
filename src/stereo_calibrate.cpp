@@ -2,6 +2,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/types.hpp"
+#include "opencv2/ximgproc/"
 
 #include <vector>
 #include <string>
@@ -97,16 +98,16 @@ int main(int argc, char *argv[]) {
 		
 
 		drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
-		imshow("Corners11", camera1image1);
+		//imshow("Corners11", camera1image1);
 
 		drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
-		imshow("Corners12", camera1image2);
+		//imshow("Corners12", camera1image2);
 
 		drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
-		imshow("Corners21", camera2image1);
+		//imshow("Corners21", camera2image1);
 
 		drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
-		imshow("Corners22", camera2image2);
+		//imshow("Corners22", camera2image2);
 
 		
 		//initialize our fake 3D coordinate system, one for each set of images
@@ -323,14 +324,16 @@ int main(int argc, char *argv[]) {
 
 		//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
 		//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
+		getDisparityVis(disp, disp8, 1.0);
+
 
 		//lets show the images
-		//namedWindow("left", 1);
-		//imshow("left", img1rectified);
-		//namedWindow("right", 1);
-		//imshow("right", img2rectified);
+		namedWindow("left", 1);
+		imshow("left", img1rectified);
+		namedWindow("right", 1);
+		imshow("right", img2rectified);
 		namedWindow("disparity", 0);
-		imshow("disparity", disp);
+		imshow("disparity", disp8);
 		printf("press any key to continue...");
 		fflush(stdout);
 		waitKey();
