@@ -26,16 +26,17 @@ int main(int argc, char *argv[]) {
 		Size boardSize(6, 9);
 
 		//read in the image files
-		/*string camera1image1fn = "res/left01.jpg";
+		string camera1image1fn = "res/left01.jpg";
 		string camera1image2fn = "res/left02.jpg";
 		string camera2image1fn = "res/right01.jpg";
 		string camera2image2fn = "res/right02.jpg";
-		*/
+		
+		/*
 		string camera1image1fn = "res/myLeft01.jpg";
 		string camera1image2fn = "res/myLeft01.jpg";
 		string camera2image1fn = "res/myRight01.jpg";
 		string camera2image2fn = "res/myRight01.jpg";
-
+		*/
 
 		const float squareSize = 1.0f;
 
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]) {
 		//we know the images are the same size, now find the chessboard corners in the first image
 		//an array of arrays of points for the left camera, one array per image
 		vector<vector<Point2f> > camera1ImagePoints(2);
-		/*bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
+		bool found = findChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0]);//check to see if we can find the chessboard in the first image
 		if (!found)
 		{
 			cerr << "Corners not found in image 1,1" << endl;
@@ -70,10 +71,10 @@ int main(int argc, char *argv[]) {
 			cerr << "Corners not found in image 1,2" << endl;
 			exit(-1);
 		}
-		*/
+		
 		//now the same for the right camera
 		vector<vector<Point2f> > camera2ImagePoints(2);
-		/*found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
+		found = findChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0]);//check to see if we can find the chessboard in the first image
 		if (!found)
 		{
 			cerr << "Corners not found in image 2,1" << endl;
@@ -107,10 +108,11 @@ int main(int argc, char *argv[]) {
 		drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
 		imshow("Corners22", camera2image2);
 
-		*/
+		
 		//initialize our fake 3D coordinate system, one for each set of images
 		vector<vector<Point3f> > objectPoints(2);
 
+		/*
 		//my experimental points
 		objectPoints[0].push_back(Point3f(0, 0, 0));
 		objectPoints[0].push_back(Point3f(0, 15, 0));
@@ -246,11 +248,11 @@ int main(int argc, char *argv[]) {
 		//camera2ImagePoints[1].push_back(Point2f(160, 900));
 		//camera2ImagePoints[1].push_back(Point2f(100, 130));
 
-
+		*/
 		
 		//both are identical, because we're using the same chessboard in each
-		//objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
-		//objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
+		objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
+		objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
 
 		//init the initial camera matrices
 		Mat cameraMatrices[2];
@@ -308,7 +310,7 @@ int main(int argc, char *argv[]) {
 		bm->setPreFilterCap(31);
 		bm->setBlockSize(11); //block size to check
 		bm->setMinDisparity(0);
-		bm->setNumDisparities(256); //number of disparities
+		bm->setNumDisparities(16); //number of disparities
 		bm->setTextureThreshold(10);
 		bm->setUniquenessRatio(15);
 		bm->setSpeckleWindowSize(100);
@@ -320,7 +322,7 @@ int main(int argc, char *argv[]) {
 		bm->compute(img1rectified, img2rectified, disp);
 
 		//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
-		disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
+		//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
 
 		//lets show the images
 		//namedWindow("left", 1);
@@ -328,7 +330,7 @@ int main(int argc, char *argv[]) {
 		//namedWindow("right", 1);
 		//imshow("right", img2rectified);
 		namedWindow("disparity", 0);
-		imshow("disparity", disp8);
+		imshow("disparity", disp);
 		printf("press any key to continue...");
 		fflush(stdout);
 		waitKey();
