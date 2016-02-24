@@ -310,7 +310,7 @@ int main(int argc, char *argv[]) {
 		//bm->setROI2(roi2);
 		bm->setPreFilterCap(31);
 		bm->setBlockSize(9); //block size to check
-		bm->setMinDisparity(-139);
+		bm->setMinDisparity(-50);
 		bm->setNumDisparities(112); //number of disparities
 		//bm->setTextureThreshold(10);
 		//bm->setUniquenessRatio(15);
