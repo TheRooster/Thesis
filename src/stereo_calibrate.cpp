@@ -324,7 +324,7 @@ int main(int argc, char *argv[]) {
 
 		//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
 		//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
-		getDisparityVis(disp, disp8, 1.0);
+		cv::ximgproc::getDisparityVis(disp, disp8, 1.0);
 
 
 		//lets show the images
