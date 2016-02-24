@@ -311,7 +311,7 @@ int main(int argc, char *argv[]) {
 		bm->setPreFilterCap(31);
 		bm->setBlockSize(27); //block size to check
 		bm->setMinDisparity(-50);
-		bm->setNumDisparities(256); //number of disparities
+		bm->setNumDisparities(128); //number of disparities
 		//bm->setTextureThreshold(10);
 		//bm->setUniquenessRatio(15);
 		//bm->setSpeckleWindowSize(100);
