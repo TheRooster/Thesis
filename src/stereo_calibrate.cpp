@@ -323,8 +323,8 @@ int main(int argc, char *argv[]) {
 		bm->compute(img1rectified, img2rectified, disp);
 
 		//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
-		disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
-		cv::ximgproc::getDisparityVis(disp8, disparityVis, 1.0);
+		//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
+		cv::ximgproc::getDisparityVis(disp, disparityVis, 1.0);
 
 
 		//lets show the images
