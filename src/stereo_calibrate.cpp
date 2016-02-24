@@ -20,9 +20,7 @@
 #include <GL/freeglut.h>
 #include <iostream>
 #include <math.h>
-#include <IL/il.h>
-#include <IL/ilu.h>
-#include <IL/ilut.h>
+
 
 #include <string>
 #include <vector>
