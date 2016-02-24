@@ -2,7 +2,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/types.hpp"
-#include "opencv2/ximgproc"
+#include "opencv2/ximgproc.hpp"
 
 #include <vector>
 #include <string>
