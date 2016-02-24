@@ -37,6 +37,7 @@ using namespace std;
 GLuint rectifyShader, disparityShader;
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize);
+GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
 
 int main(int argc, char *argv[]) {
 
