@@ -38,8 +38,12 @@ GLuint rectifyShader, disparityShader;
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize);
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
+void GL_initialize();
 
 int main(int argc, char *argv[]) {
+
+	//set up the shaders.
+	GL_initialize();
 
 	try {
 		//initialize the size of the board to 6x9
@@ -110,23 +114,23 @@ int main(int argc, char *argv[]) {
 		
 
 		//display the images with the corners drawn on them, this is just a sanity check
-		//namedWindow("Corners11", 1);
-		//namedWindow("Corners12", 1);
-		//namedWindow("Corners21", 1);
-		//namedWindow("Corners22", 1);
+		namedWindow("Corners11", 1);
+		namedWindow("Corners12", 1);
+		namedWindow("Corners21", 1);
+		namedWindow("Corners22", 1);
 		
 
 		//drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
-		//imshow("Corners11", camera1image1);
+		imshow("Corners11", camera1image1);
 
 		//drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
-		//imshow("Corners12", camera1image2);
+		imshow("Corners12", camera1image2);
 
 		//drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
-		//imshow("Corners21", camera2image1);
+		imshow("Corners21", camera2image1);
 
 		//drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
-		//imshow("Corners22", camera2image2);
+		imshow("Corners22", camera2image2);
 
 		
 		//initialize our fake 3D coordinate system, one for each set of images
@@ -392,6 +396,7 @@ vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) 
 void GL_initialize() {
 	rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
 	disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
+
 
 }
 
