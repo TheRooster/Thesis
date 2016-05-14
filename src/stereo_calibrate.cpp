@@ -93,10 +93,12 @@ int main(int argc, char *argv[]) {
 	}
 	//now that we've generated the rectification transforms for the images, let's rectify them
 	//Generate these first, as they remain constant as long as the cameras do.
+	
+	cout << "initing rectify maps" << endl;
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
-
+	cout << "maps inited" << endl;
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
 	//if we're using opengl we jump to our opengl rectify function.
@@ -107,9 +109,10 @@ int main(int argc, char *argv[]) {
 		opengl_remap();
 	}else{
 		//Read in from cameras eventually.
+		cout << "remapping" << endl;
 		remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
-
+		cout << "remapped" << endl;	
 		bm->compute(img1rectified, img2rectified, disp);
 
 		imshow("disparity", disparityVis);
@@ -123,6 +126,7 @@ int main(int argc, char *argv[]) {
 
 
 int calibrate(){
+	cout << "In Calibrate" <<endl;
 	//initialize the size of the board to 6x9
 	Size boardSize(6, 9);
 
@@ -139,6 +143,8 @@ int calibrate(){
 		string camera2image2fn = "res/myRight01.jpg";
 	 */
 
+	cout << "Got Images" << endl;
+
 	const float squareSize = 1.0f;
 
 	//read the images into openCV matrices
@@ -147,6 +153,14 @@ int calibrate(){
 	Mat camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_GRAYSCALE);
 	Mat camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_GRAYSCALE);
 
+	Size imSize = camera1image1.size();
+
+	//check that the sizes of the images are the same
+	if (camera1image2.size() != imSize || camera1image1.size() != imSize || camera2image2.size() != imSize)
+	{
+		std::cerr << "All images must be the same size!" << std::endl;
+		return -1;
+	}
 	namedWindow("Image11", 1);
 	namedWindow("Image12", 1);
 	namedWindow("Image21", 1);
@@ -157,16 +171,8 @@ int calibrate(){
 	imshow("Image12", camera1image2);
 	imshow("Image21", camera2image1);
 	imshow("Image22", camera2image2);
+	cout<<"have the images appeared?"<<endl;
 
-	return -1;
-	Size imSize = camera1image1.size();
-
-	//check that the sizes of the images are the same
-	if (camera1image2.size() != imSize || camera1image1.size() != imSize || camera2image2.size() != imSize)
-	{
-		std::cerr << "All images must be the same size!" << std::endl;
-		return -1;
-	}
 
 	//we know the images are the same size, now find the chessboard corners in the first image
 	//an array of arrays of points for the left camera, one array per image
@@ -203,20 +209,26 @@ int calibrate(){
 
 
 	//display the images with the corners drawn on them, this is just a sanity check
-
-	//drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
-	imshow("Corners11", camera1image1);
-
-	//drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
-	imshow("Corners12", camera1image2);
-
-	//drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
-	imshow("Corners21", camera2image1);
-
-	//drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
-	imshow("Corners22", camera2image2);
+	namedWindow("Corne11", 1);
+	namedWindow("Corne12", 1);
+	namedWindow("Corne21", 1);
+	namedWindow("Corne22", 1);
 
 
+	drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
+	imshow("Corne11", camera1image1);
+
+	drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
+	imshow("Corne12", camera1image2);
+
+	drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
+	imshow("Corne21", camera2image1);
+
+	drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
+	imshow("Corne22", camera2image2);
+
+
+	waitKey(0);	
 	//initialize our fake 3D coordinate system, one for each set of images
 	vector<vector<Point3f> > objectPoints(2);
 
@@ -361,14 +373,15 @@ int calibrate(){
 	//both are identical, because we're using the same chessboard in each
 	objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
 	objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
-
+	cout << "created squaresize" << endl;
 	//init the initial camera matrices
 	cameraMatrices[0] = Mat::eye(3, 3, CV_64F); //3x3 identity matrix of 64bit floating point numbers(doubles)
 	cameraMatrices[1] = Mat::eye(3, 3, CV_64F);
 
 
 	//init the output matrices for the stereoCalibrate step
-
+	
+	cout << "calibrating"<< endl;
 
 	double error = stereoCalibrate(objectPoints, camera1ImagePoints, camera2ImagePoints,
 			cameraMatrices[0], distortionCoefficients[0],
@@ -384,13 +397,15 @@ int calibrate(){
 			CV_CALIB_FIX_K5, TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 100, 1e-5)); //Termination Criteria (Why move this between 2.4 and 3.0?)
 
 
-
+	cout << "rectifying" << endl;
 
 
 	//now we have the right parameters to rectify the images
 	stereoRectify(cameraMatrices[0], distortionCoefficients[0], cameraMatrices[1], distortionCoefficients[1],
 			imSize, rotationMatrix, translationVector, rotationMatrices[0], rotationMatrices[1], projectionMatrices[0], projectionMatrices[1],
 			disparityToDepth, 0, 0, cvSize(0, 0));
+
+	cout << "rectified" << endl;
 }
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) {
