@@ -2,7 +2,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/types.hpp"
-#include "opencv2/ximgproc.hpp"
+#include "opencv2/imgproc.hpp"
 
 #include <vector>
 #include <string>
@@ -29,8 +29,12 @@
 #include <algorithm>
 
 
+bool USE_OPENGL=false;
+
 using namespace cv;
 using namespace std;
+
+
 
 
 //Terrible, Nasty Global Variables
@@ -38,21 +42,45 @@ using namespace std;
 GLuint rectifyShader, disparityShader, program;
 vector<int> indices;
 
-//Read in the Calibration Images into CV::Mats
+//CV Vars
 Mat camera1image1;
 Mat camera1image2;
 Mat camera2image1;
 Mat camera2image2;
+Size imSize;
 
+Mat distortionCoefficients[2]; //array of matrices for the distortion coefficients, one per camera
+Mat rotationMatrix; //a rotation matrix from one camera to the other
+Mat translationVector; //a translation vector from one camera to the other
+Mat essentialMatrix;
+Mat fundamentalMatrix;
+
+Mat cameraMatrices[2];
 Mat rotationMatrices[2];
 Mat projectionMatrices[2];
 Mat disparityToDepth;
 
 
+
+//Mats used for remapping images to their rectified selves
+Mat map11, map12, map21, map22;
+
+
+//Stereo BM object for creating disparity image
+Ptr<StereoBM> bm;
+//Our output disparity maps
+Mat disp, disp8, disparityVis;
+
+
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize);
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
 void GL_initialize();
-vector<int> genindices(int picWidth, int picHeight);
+vector<int> genIndices(int picWidth, int picHeight);
+int calibrate();
+void opengl_remap();
+
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -63,55 +91,30 @@ int main(int argc, char *argv[]) {
 	{
 		return -1;
 	}
-
-
 	//now that we've generated the rectification transforms for the images, let's rectify them
-	Mat map11, map12, map21, map22;
+	//Generate these first, as they remain constant as long as the cameras do.
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
+
+
+	//from here we split, if we're using cpu, we use the remap function to remap the images.
+	//if we're using opengl we jump to our opengl rectify function.
 	Mat img1rectified, img2rectified;
-	remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
-	remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 
-	//now we have rectified images in img1rectified and img2rectified
-	//lets generate a disparity map using Stereo Block Matching
-	Ptr<StereoBM> bm = StereoBM::create(16, 9); //create the StereoBM Object
+	if(USE_OPENGL == true){
+		//will need to read images in in a format opengl understands
+		opengl_remap();
+	}else{
+		//Read in from cameras eventually.
+		remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
+		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 
-	//init some parameters
-	//bm->setROI1(); //usable area in rectified image
-	//bm->setROI2(roi2);
-	bm->setPreFilterCap(31);
-	bm->setBlockSize(25); //block size to check
-	bm->setMinDisparity(-78);
-	bm->setNumDisparities(192); //number of disparities
-	//bm->setTextureThreshold(10);
-	//bm->setUniquenessRatio(15);
-	//bm->setSpeckleWindowSize(100);
-	bm->setSpeckleRange(8);
-	//bm->setDisp12MaxDiff(1);
+		bm->compute(img1rectified, img2rectified, disp);
 
+		imshow("disparity", disparityVis);
 
-	Mat disp, disp8, disparityVis;
-	bm->compute(img1rectified, img2rectified, disp);
-
-	//now we have a 16 bit signed single channel image, containing disparity values scaled by 16.
-	//disp.convertTo(disp8, CV_8U, 255 / 16 * 16.);
-	cv::ximgproc::getDisparityVis(disp, disparityVis, 1.0);
-
-
-	//lets show the images
-	namedWindow("left", 1);
-	imshow("left", img1rectified);
-	namedWindow("right", 1);
-	imshow("right", img2rectified);
-	namedWindow("disparity", 0);
-	imshow("disparity", disparityVis);
-	printf("press any key to continue...");
-	fflush(stdout);
-	waitKey();
-	printf("\n");
-
+	}
 
 	return 0;
 
@@ -353,17 +356,12 @@ int calibrate(){
 	objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
 
 	//init the initial camera matrices
-	Mat cameraMatrices[2];
 	cameraMatrices[0] = Mat::eye(3, 3, CV_64F); //3x3 identity matrix of 64bit floating point numbers(doubles)
 	cameraMatrices[1] = Mat::eye(3, 3, CV_64F);
 
 
 	//init the output matrices for the stereoCalibrate step
-	Mat distortionCoefficients[2]; //array of matrices for the distortion coefficients, one per camera
-	Mat rotationMatrix; //a rotation matrix from one camera to the other
-	Mat translationVector; //a translation vector from one camera to the other
-	Mat essentialMatrix;
-	Mat fundamentalMatrix;
+
 
 	double error = stereoCalibrate(objectPoints, camera1ImagePoints, camera2ImagePoints,
 			cameraMatrices[0], distortionCoefficients[0],
@@ -386,7 +384,6 @@ int calibrate(){
 	stereoRectify(cameraMatrices[0], distortionCoefficients[0], cameraMatrices[1], distortionCoefficients[1],
 			imSize, rotationMatrix, translationVector, rotationMatrices[0], rotationMatrices[1], projectionMatrices[0], projectionMatrices[1],
 			disparityToDepth, 0, 0, cvSize(0, 0));
-
 }
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) {
@@ -416,7 +413,26 @@ void GL_initialize() {
 
 }
 
+void Init_SBM(){
 
+	bm = StereoBM::create(16, 9); //create the StereoBM Object
+
+	//bm->setROI1(); //usable area in rectified image
+	//bm->setROI2(roi2);
+	bm->setPreFilterCap(31);
+	bm->setBlockSize(25); //block size to check
+	bm->setMinDisparity(-78);
+	bm->setNumDisparities(192); //number of disparities
+	//bm->setTextureThreshold(10);
+	//bm->setUniquenessRatio(15);
+	//bm->setSpeckleWindowSize(100);
+	bm->setSpeckleRange(8);
+	//bm->setDisp12MaxDiff(1);
+
+
+	Mat disp, disp8, disparityVis;
+
+}
 
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
@@ -556,7 +572,7 @@ void Display(void){
 	glEnable(GL_DEPTH_TEST);
 
 	glUseProgram(program);
-	glBindVertexArray(vao);
+	//glBindVertexArray(vao);
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
 
