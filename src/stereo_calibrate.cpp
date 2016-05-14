@@ -147,10 +147,10 @@ int calibrate(){
 	Mat camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_GRAYSCALE);
 	Mat camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_GRAYSCALE);
 
-	namedWindow("Corners11", 1);
-	namedWindow("Corners12", 1);
-	namedWindow("Corners21", 1);
-	namedWindow("Corners22", 1);
+	namedWindow("Image11", 1);
+	namedWindow("Image12", 1);
+	namedWindow("Image21", 1);
+	namedWindow("Image22", 1);
 
 
 	imshow("Image11", camera1image1);
