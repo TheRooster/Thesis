@@ -158,7 +158,7 @@ int calibrate(){
 	imshow("Image21", camera2image1);
 	imshow("Image22", camera2image2);
 
-	return 0;
+	return -1;
 	Size imSize = camera1image1.size();
 
 	//check that the sizes of the images are the same
