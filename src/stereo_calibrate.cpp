@@ -147,6 +147,16 @@ int calibrate(){
 	Mat camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_GRAYSCALE);
 	Mat camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_GRAYSCALE);
 
+	namedWindow("Corners11", 1);
+	namedWindow("Corners12", 1);
+	namedWindow("Corners21", 1);
+	namedWindow("Corners22", 1);
+
+
+	imshow("Image11", camera1image1);
+	imshow("Image12", camera1image2);
+	imshow("Image21", camera2image1);
+	imshow("Image22", camera2image2);
 	Size imSize = camera1image1.size();
 
 	//check that the sizes of the images are the same
@@ -191,11 +201,6 @@ int calibrate(){
 
 
 	//display the images with the corners drawn on them, this is just a sanity check
-	namedWindow("Corners11", 1);
-	namedWindow("Corners12", 1);
-	namedWindow("Corners21", 1);
-	namedWindow("Corners22", 1);
-
 
 	//drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
 	imshow("Corners11", camera1image1);
