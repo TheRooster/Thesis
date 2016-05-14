@@ -85,7 +85,7 @@ void opengl_remap();
 int main(int argc, char *argv[]) {
 
 	//init our opengl stuff.
-	GL_initialize();
+//	GL_initialize();
 
 	if(calibrate() != 0)//run the calibration to retrieve our matrices for transformation
 	{
@@ -582,3 +582,9 @@ void Display(void){
 	glutSwapBuffers();
 
 }
+
+void opengl_remap(){
+
+
+}
+
