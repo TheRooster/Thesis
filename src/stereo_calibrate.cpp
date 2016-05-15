@@ -302,9 +302,8 @@ void GL_initialize() {
 }
 
 void Init_SBM(){
-
 	bm = StereoBM::create(16, 9); //create the StereoBM Object
-
+/*
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
 	bm->setPreFilterCap(31);
@@ -316,7 +315,7 @@ void Init_SBM(){
 	bm->setSpeckleWindowSize(100);
 	bm->setSpeckleRange(32);
 	bm->setDisp12MaxDiff(1);
-
+*/
 }
 void Init_SGBM(){
 	sgbm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
