@@ -318,7 +318,7 @@ void Init_SBM(){
 	bm->setSpeckleWindowSize(30);
 	bm->setSpeckleRange(32);
 //	bm->setDisp12MaxDiff(1);
-*/
+
 }
 void Init_SGBM(){
 	sgbm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
