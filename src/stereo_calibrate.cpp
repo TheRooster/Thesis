@@ -134,7 +134,6 @@ int main(int argc, char *argv[]) {
 
 
 int calibrate(){
-	cout << "In Calibrate" <<endl;
 	//initialize the size of the board to 6x9
 	Size boardSize(6, 9);
 
@@ -302,7 +301,7 @@ void GL_initialize() {
 }
 
 void Init_SBM(){
-	bm = StereoBM::create(64, 25); //create the StereoBM Object
+	bm = StereoBM::create(64, 3); //create the StereoBM Object
 /*
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
