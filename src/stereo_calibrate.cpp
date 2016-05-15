@@ -309,7 +309,7 @@ void Init_SBM(){
 
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
-	//bm->setPreFilterCap(31);
+	bm->setPreFilterCap(31);
 	//bm->setBlockSize(9); //block size to check
 //	bm->setMinDisparity(-32);
 	bm->setNumDisparities(64); //number of disparities
