@@ -306,18 +306,18 @@ void GL_initialize() {
 
 void Init_SBM(){
 	bm = StereoBM::create(64, 7); //create the StereoBM Object
-/*
+
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
-	bm->setPreFilterCap(31);
-	bm->setBlockSize(9); //block size to check
-	bm->setMinDisparity(0);
-	bm->setNumDisparities(64); //number of disparities
-	bm->setTextureThreshold(10);
-	bm->setUniquenessRatio(15);
-	bm->setSpeckleWindowSize(100);
+	//bm->setPreFilterCap(31);
+	//bm->setBlockSize(9); //block size to check
+	//bm->setMinDisparity(0);
+	//bm->setNumDisparities(64); //number of disparities
+	//bm->setTextureThreshold(10);
+//	bm->setUniquenessRatio(15);
+	bm->setSpeckleWindowSize(30);
 	bm->setSpeckleRange(32);
-	bm->setDisp12MaxDiff(1);
+//	bm->setDisp12MaxDiff(1);
 */
 }
 void Init_SGBM(){
