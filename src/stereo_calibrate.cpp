@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 
 		//Calc the Disparity map using Stereo BlockMatching
-		bm->compute(img1rectified, img2rectified, disp);
+		bm->compute(img2rectified, img1rectified, disp);
 		Mat dispVis;
 		cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
 		//Show the Results
@@ -309,7 +309,7 @@ void Init_SBM(){
 	//bm->setROI2(roi2);
 	bm->setPreFilterCap(31);
 	bm->setBlockSize(25); //block size to check
-	bm->setMinDisparity(-78);
+	bm->setMinDisparity(0);
 	bm->setNumDisparities(192); //number of disparities
 	//bm->setTextureThreshold(10);
 	//bm->setUniquenessRatio(15);
