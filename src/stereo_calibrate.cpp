@@ -311,7 +311,7 @@ void Init_SBM(){
 	//bm->setROI2(roi2);
 	//bm->setPreFilterCap(31);
 	//bm->setBlockSize(9); //block size to check
-	bm->setMinDisparity(-32);
+//	bm->setMinDisparity(-32);
 	//bm->setNumDisparities(64); //number of disparities
 	//bm->setTextureThreshold(10);
 //	bm->setUniquenessRatio(15);
