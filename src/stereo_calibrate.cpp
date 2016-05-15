@@ -88,33 +88,13 @@ int main(int argc, char *argv[]) {
 	}
 	//now that we've generated the rectification transforms for the images, let's rectify them
 	//Generate these first, as they remain constant as long as the cameras do.
-	cout << "verifying all values got set" << endl;
-	cout << cameraMatrices[0] << endl;
-	cout << "stop" << endl;
-	cout << cameraMatrices[1] << endl;
-	cout << "stop" << endl;
-	cout << distortionCoefficients[0] << endl;
-	cout << "stop" << endl;
-	cout << distortionCoefficients[1] << endl;
-	cout << rotationMatrices[0] << endl;
-	cout << "stop" << endl;
-	cout << rotationMatrices[1] << endl;
-	cout << "verified" << endl;
 
-
-
-	cout << "initing rectify maps" << endl;
 	//Mats used for remapping images to their rectified selves
 	Mat map11, map12, map21, map22;
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
-	cout << map11 << endl;
-	cout << map12 << endl;
-	cout << map21 << endl;
-	cout << map22 << endl;
 
-	cout << "maps inited" << endl;
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
 	//if we're using opengl we jump to our opengl rectify function.
@@ -129,7 +109,7 @@ int main(int argc, char *argv[]) {
 		remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 		cout << "remapped" << endl;	
-		//bm->compute(img1rectified, img2rectified, disp);
+		bm->compute(img1rectified, img2rectified, disp);
 
 		//imshow("disparity", disparityVis);
 
@@ -159,7 +139,6 @@ int calibrate(){
 		string camera2image2fn = "res/myRight01.jpg";
 	 */
 
-	cout << "Got Images" << endl;
 
 	const float squareSize = 1.0f;
 
@@ -183,11 +162,10 @@ int calibrate(){
 	namedWindow("Image22", 1);
 
 
-	imshow("Image11", camera1image1);
-	imshow("Image12", camera1image2);
-	imshow("Image21", camera2image1);
-	imshow("Image22", camera2image2);
-	cout<<"have the images appeared?"<<endl;
+	//imshow("Image11", camera1image1);
+	//imshow("Image12", camera1image2);
+	//imshow("Image21", camera2image1);
+	//imshow("Image22", camera2image2);
 
 
 	//we know the images are the same size, now find the chessboard corners in the first image
@@ -232,16 +210,16 @@ int calibrate(){
 
 
 	drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
-	imshow("Corne11", camera1image1);
+	//imshow("Corne11", camera1image1);
 
 	drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
-	imshow("Corne12", camera1image2);
+	//imshow("Corne12", camera1image2);
 
 	drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
-	imshow("Corne21", camera2image1);
+	//imshow("Corne21", camera2image1);
 
 	drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
-	imshow("Corne22", camera2image2);
+	//imshow("Corne22", camera2image2);
 
 
 	waitKey(0);	
@@ -253,7 +231,6 @@ int calibrate(){
 	//both are identical, because we're using the same chessboard in each
 	objectPoints[0] = Create3DChessboardCoordinates(boardSize, squareSize);
 	objectPoints[1] = Create3DChessboardCoordinates(boardSize, squareSize);
-	cout << "created squaresize" << endl;
 	//init the initial camera matrices
 	cameraMatrices[0] = Mat::eye(3, 3, CV_64F); //3x3 identity matrix of 64bit floating point numbers(doubles)
 	cameraMatrices[1] = Mat::eye(3, 3, CV_64F);
@@ -261,7 +238,6 @@ int calibrate(){
 
 	//init the output matrices for the stereoCalibrate step
 	
-	cout << "calibrating"<< endl;
 
 	double error = stereoCalibrate(objectPoints, camera1ImagePoints, camera2ImagePoints,
 			cameraMatrices[0], distortionCoefficients[0],
@@ -277,7 +253,6 @@ int calibrate(){
 			CV_CALIB_FIX_K5, TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 100, 1e-5)); //Termination Criteria (Why move this between 2.4 and 3.0?)
 
 
-	cout << "rectifying" << endl;
 
 
 	//now we have the right parameters to rectify the images
@@ -285,7 +260,6 @@ int calibrate(){
 			imSize, rotationMatrix, translationVector, rotationMatrices[0], rotationMatrices[1], projectionMatrices[0], projectionMatrices[1],
 			disparityToDepth, 0, 0, cvSize(0, 0));
 
-	cout << "rectified" << endl;
 }
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) {
