@@ -308,14 +308,14 @@ void Init_SBM(){
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
 	bm->setPreFilterCap(31);
-	bm->setBlockSize(25); //block size to check
+	bm->setBlockSize(9); //block size to check
 	bm->setMinDisparity(0);
-	bm->setNumDisparities(192); //number of disparities
-	//bm->setTextureThreshold(10);
-	//bm->setUniquenessRatio(15);
-	//bm->setSpeckleWindowSize(100);
-	bm->setSpeckleRange(8);
-	//bm->setDisp12MaxDiff(1);
+	bm->setNumDisparities(64); //number of disparities
+	bm->setTextureThreshold(10);
+	bm->setUniquenessRatio(15);
+	bm->setSpeckleWindowSize(100);
+	bm->setSpeckleRange(32);
+	bm->setDisp12MaxDiff(1);
 
 }
 void Init_SGBM(){
