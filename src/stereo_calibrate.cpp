@@ -95,10 +95,14 @@ int main(int argc, char *argv[]) {
 	//Generate these first, as they remain constant as long as the cameras do.
 	cout << "verifying all values got set" << endl;
 	cout << cameraMatrices[0] << endl;
+	cout << "stop" << endl;
 	cout << cameraMatrices[1] << endl;
+	cout << "stop" << endl;
 	cout << distortionCoefficients[0] << endl;
+	cout << "stop" << endl;
 	cout << distortionCoefficients[1] << endl;
 	cout << rotationMatrices[0] << endl;
+	cout << "stop" << endl;
 	cout << rotationMatrices[1] << endl;
 	cout << "verified" << endl;
 
