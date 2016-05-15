@@ -301,7 +301,7 @@ void GL_initialize() {
 }
 
 void Init_SBM(){
-	bm = StereoBM::create(64, 3); //create the StereoBM Object
+	bm = StereoBM::create(64, 5); //create the StereoBM Object
 /*
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
