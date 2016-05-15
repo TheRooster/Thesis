@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
 	//init the Stereo Block Matcher, needs only be done once
-	Init_SGBM();
+	Init_SBM();
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
 	//if we're using opengl we jump to our opengl rectify function.
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 
 		//Calc the Disparity map using Stereo BlockMatching
-		sgbm->compute(img2rectified, img1rectified, disp);
+		bm->compute(img2rectified, img1rectified, disp);
 		Mat dispN;
 		normalize( disp, dispN, 0, 256, CV_MINMAX );
 		//Show the Results
