@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 	//if we're using opengl we jump to our opengl rectify function.
 	Mat camera1image = imread("left.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 	Mat camera2image = imread("right.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-
+	Size = camera1image.size();
 	Mat img1rectified, img2rectified;
 	namedWindow("LeftImageRectified", 1);
 	namedWindow("RightImageRectified", 1);
