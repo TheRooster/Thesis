@@ -108,14 +108,18 @@ int main(int argc, char *argv[]) {
 		opengl_remap();
 	}else{
 		//Read in from cameras eventually.
-		cout << "remapping" << endl;
 		remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
-		cout << "remapped" << endl;	
+
+		//Calc the Disparity map using Stereo BlockMatching
 		bm->compute(img1rectified, img2rectified, disp);
+
+		//convert the disparity map to 16 bit
+		disp.convertTo(disp8, CV_8U, 255 / 16 * 16);
+		//Show the Results
 		imshow("LeftImageRectified", img1rectified);
 		imshow("RightImageRectified", img2rectified);
-		imshow("disparity", disp);
+		imshow("Disparity Map", disp);
 		waitKey(0);
 	}
 
