@@ -94,12 +94,15 @@ int main(int argc, char *argv[]) {
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
-
+	//init the Stereo Block Matcher, needs only be done once
+	Init_SBM();
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
 	//if we're using opengl we jump to our opengl rectify function.
 	Mat img1rectified, img2rectified;
-
+	namedWindow("LeftImageRectified", 1);
+	namedWindow("RightImageRectified", 1);
+	namedWindow("Disparity Map", 1);
 	if(USE_OPENGL == true){
 		//will need to read images in in a format opengl understands
 		opengl_remap();
@@ -110,9 +113,10 @@ int main(int argc, char *argv[]) {
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 		cout << "remapped" << endl;	
 		bm->compute(img1rectified, img2rectified, disp);
-
-		//imshow("disparity", disparityVis);
-
+		imshow("LeftImageRectified", img1rectified);
+		imshow("RightImageRectified", img2rectified);
+		imshow("disparity", disp);
+		waitKey(0);
 	}
 
 	return 0;
@@ -156,10 +160,10 @@ int calibrate(){
 		std::cerr << "All images must be the same size!" << std::endl;
 		return -1;
 	}
-	namedWindow("Image11", 1);
-	namedWindow("Image12", 1);
-	namedWindow("Image21", 1);
-	namedWindow("Image22", 1);
+//	namedWindow("Image11", 1);
+//	namedWindow("Image12", 1);
+//	namedWindow("Image21", 1);
+//	namedWindow("Image22", 1);
 
 
 	//imshow("Image11", camera1image1);
@@ -203,10 +207,10 @@ int calibrate(){
 
 
 	//display the images with the corners drawn on them, this is just a sanity check
-	namedWindow("Corne11", 1);
-	namedWindow("Corne12", 1);
-	namedWindow("Corne21", 1);
-	namedWindow("Corne22", 1);
+	//namedWindow("Corne11", 1);
+	//namedWindow("Corne12", 1);
+	//namedWindow("Corne21", 1);
+	//namedWindow("Corne22", 1);
 
 
 	drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
@@ -222,7 +226,7 @@ int calibrate(){
 	//imshow("Corne22", camera2image2);
 
 
-	waitKey(0);	
+	//waitKey(0);
 	//initialize our fake 3D coordinate system, one for each set of images
 	vector<vector<Point3f> > objectPoints(2);
 
