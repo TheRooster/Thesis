@@ -3,6 +3,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/types.hpp"
 #include "opencv2/imgproc.hpp"
+#include "opencv2/ximgproc.hpp"
 
 #include <vector>
 #include <string>
@@ -117,12 +118,12 @@ int main(int argc, char *argv[]) {
 
 		//Calc the Disparity map using Stereo BlockMatching
 		bm->compute(img2rectified, img1rectified, disp);
-		Mat dispN;
-		normalize( disp, dispN, 0, 256, CV_MINMAX );
+		Mat dispVis;
+		getDisparityVis(disp, dispVis, 1);
 		//Show the Results
 		imshow("LeftImageRectified", img1rectified);
 		imshow("RightImageRectified", img2rectified);
-		imshow("Disparity Map", dispN);
+		imshow("Disparity Map", disp);
 		waitKey(0);
 	}
 
