@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
 	//init the Stereo Block Matcher, needs only be done once
-	Init_SBM();
+	Init_SGBM();
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
 	//if we're using opengl we jump to our opengl rectify function.
@@ -319,7 +319,7 @@ void Init_SBM(){
 
 }
 void Init_SGBM(){
-	bm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
+	sgbm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
 
 
 	sgbm->setPreFilterCap(63);
