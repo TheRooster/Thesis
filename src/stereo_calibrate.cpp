@@ -73,7 +73,7 @@ void GL_initialize();
 vector<int> genIndices(int picWidth, int picHeight);
 int calibrate();
 void opengl_remap();
-
+void Init_SBM();
 
 
 
