@@ -112,6 +112,11 @@ int main(int argc, char *argv[]) {
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
 
+	cout << map11 << endl;
+	cout << map12 << endl;
+	cout << map21 << endl;
+	cout << map22 << endl;
+
 	cout << "maps inited" << endl;
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
@@ -124,10 +129,6 @@ int main(int argc, char *argv[]) {
 	}else{
 		//Read in from cameras eventually.
 		cout << "remapping" << endl;
-		cout << map11 << endl;
-		cout << map12 << endl;
-		cout << map21 << endl;
-		cout << map22 << endl;
 		remap(camera1image2, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 		cout << "remapped" << endl;	
