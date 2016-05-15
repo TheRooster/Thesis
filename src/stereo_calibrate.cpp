@@ -93,9 +93,8 @@ int main(int argc, char *argv[]) {
 	}
 	//now that we've generated the rectification transforms for the images, let's rectify them
 	//Generate these first, as they remain constant as long as the cameras do.
-	Mat camera1image = imread("left.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-	Mat camera2image = imread("right.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-	imSize = camera1image.size();
+
+
 	//Mats used for remapping images to their rectified selves
 	Mat map11, map12, map21, map22;
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
@@ -111,13 +110,15 @@ int main(int argc, char *argv[]) {
 	namedWindow("LeftImageRectified", 1);
 	namedWindow("RightImageRectified", 1);
 	namedWindow("Disparity Map", 1);
+
+
 	if(USE_OPENGL == true){
 		//will need to read images in in a format opengl understands
 		opengl_remap();
 	}else{
 		//Read in from cameras eventually.
-		remap(camera1image, img1rectified, map11, map12, INTER_LINEAR);
-		remap(camera2image, img2rectified, map21, map22, INTER_LINEAR);
+		remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
+		remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
 
 		//Calc the Disparity map using Stereo BlockMatching
 		bm->compute(img1rectified, img2rectified, disp);
@@ -304,7 +305,7 @@ void GL_initialize() {
 }
 
 void Init_SBM(){
-	bm = StereoBM::create(64, 5); //create the StereoBM Object
+	bm = StereoBM::create(64, 7); //create the StereoBM Object
 /*
 	//bm->setROI1(); //usable area in rectified image
 	//bm->setROI2(roi2);
