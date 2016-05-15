@@ -63,6 +63,9 @@ Mat disparityToDepth;
 
 //Stereo BM object for creating disparity image
 Ptr<StereoBM> bm;
+
+Ptr<StereoSGBM> sgbm;
+
 //Our output disparity maps
 Mat disp, disp8, disparityVis;
 
@@ -74,6 +77,7 @@ vector<int> genIndices(int picWidth, int picHeight);
 int calibrate();
 void opengl_remap();
 void Init_SBM();
+void Init_SGBM();
 
 
 
@@ -112,7 +116,7 @@ int main(int argc, char *argv[]) {
 		remap(camera2image2, img2rectified, map21, map22, INTER_LINEAR);
 
 		//Calc the Disparity map using Stereo BlockMatching
-		bm->compute(img1rectified, img2rectified, disp);
+		sgbm->compute(img1rectified, img2rectified, disp);
 
 		//convert the disparity map to 16 bit
 		disp.convertTo(disp8, CV_8U, 255 / 16 * 16);
@@ -313,11 +317,23 @@ void Init_SBM(){
 	bm->setSpeckleRange(8);
 	//bm->setDisp12MaxDiff(1);
 
+}
+void Init_SGBM(){
+	bm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
 
-	Mat disp, disp8, disparityVis;
+
+	sgbm->setPreFilterCap(63);
+	sgbm->setBlockSize(3);
+	sgbm->setP1(72);
+	sgbm->setP2(256);
+	sgbm->setMinDisparity(0);
+	sgbm->setNumDisparities(192);
+	sgbm->setUniquenessRatio(10);
+	sgbm->setSpeckleRange(8);
+	sgbm->setDisp12MaxDiff(1);
+
 
 }
-
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
 	// Create the shaders
