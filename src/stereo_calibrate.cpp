@@ -104,8 +104,8 @@ int main(int argc, char *argv[]) {
 
 	//from here we split, if we're using cpu, we use the remap function to remap the images.
 	//if we're using opengl we jump to our opengl rectify function.
-	Mat camera1image = imread("Left.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-	Mat camera2image = imread("Right.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	Mat camera1image = imread("left.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	Mat camera2image = imread("right.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
 	Mat img1rectified, img2rectified;
 	namedWindow("LeftImageRectified", 1);
