@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 	cout << "verified" << endl;
 
 
-	
+	map11 = Mat();
 	cout << "initing rectify maps" << endl;
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
