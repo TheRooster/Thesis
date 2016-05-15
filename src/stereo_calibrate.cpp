@@ -105,6 +105,12 @@ int main(int argc, char *argv[]) {
 	cout << rotationMatrices[1] << endl;
 	cout << "verified" << endl;
 
+	cout << "verifying images are still loaded" <<endl
+	cout << camera1image1 << endl;
+	cout << camera1image2 << endl;
+	cout << camera2image2 << endl;
+	cout << camera2image1 << endl;
+
 
 	cout << "initing rectify maps" << endl;
 	//Mats used for remapping images to their rectified selves
