@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
 		//Calc the Disparity map using Stereo BlockMatching
 		bm->compute(img2rectified, img1rectified, disp);
 		Mat dispVis;
-		getDisparityVis(disp, dispVis, 1);
+		cv::ximgproc::getDisparityVis(disp, dispVis, 1);
 		//Show the Results
 		imshow("LeftImageRectified", img1rectified);
 		imshow("RightImageRectified", img2rectified);
