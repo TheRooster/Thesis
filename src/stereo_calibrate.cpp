@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 		//Show the Results
 		imshow("LeftImageRectified", img1rectified);
 		imshow("RightImageRectified", img2rectified);
-		imshow("Disparity Map", disp);
+		imshow("Disparity Map", dispVis);
 		waitKey(0);
 	}
 
