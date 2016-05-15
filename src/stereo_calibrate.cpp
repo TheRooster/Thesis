@@ -61,10 +61,6 @@ Mat projectionMatrices[2];
 Mat disparityToDepth;
 
 
-
-
-
-
 //Stereo BM object for creating disparity image
 Ptr<StereoBM> bm;
 //Our output disparity maps
@@ -105,11 +101,6 @@ int main(int argc, char *argv[]) {
 	cout << rotationMatrices[1] << endl;
 	cout << "verified" << endl;
 
-	cout << "verifying images are still loaded" <<endl;
-	cout << camera1image1 << endl;
-	cout << camera1image2 << endl;
-	cout << camera2image2 << endl;
-	cout << camera2image1 << endl;
 
 
 	cout << "initing rectify maps" << endl;
@@ -178,7 +169,7 @@ int calibrate(){
 	camera2image1 = imread(camera2image1fn, CV_LOAD_IMAGE_GRAYSCALE);
 	camera2image2 = imread(camera2image2fn, CV_LOAD_IMAGE_GRAYSCALE);
 
-	Size imSize = camera1image1.size();
+	imSize = camera1image1.size();
 
 	//check that the sizes of the images are the same
 	if (camera1image2.size() != imSize || camera1image1.size() != imSize || camera2image2.size() != imSize)
