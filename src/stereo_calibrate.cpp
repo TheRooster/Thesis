@@ -93,6 +93,16 @@ int main(int argc, char *argv[]) {
 	}
 	//now that we've generated the rectification transforms for the images, let's rectify them
 	//Generate these first, as they remain constant as long as the cameras do.
+	cout << "verifying all values got set" << endl;
+	cout << cameraMatrices[0] << endl;
+	cout << cameraMatrices[1] << endl;
+	cout << distortionCoefficients[0] << endl;
+	cout << distortionCoefficients[1] << endl;
+	cout << rotationMatrices[0] << endl;
+	cout << rotationMatrices[1] << endl;
+	cout << "verified" << endl;
+
+
 	
 	cout << "initing rectify maps" << endl;
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
