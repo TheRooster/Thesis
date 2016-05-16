@@ -315,7 +315,7 @@ void Init_SBM(){
 	bm->setNumDisparities(128); //number of disparities
 	//bm->setTextureThreshold(10);
 //	bm->setUniquenessRatio(15);
-	bm->setSpeckleWindowSize(64);
+	bm->setSpeckleWindowSize(96);
 	bm->setSpeckleRange(64);
 //	bm->setDisp12MaxDiff(1);
 
