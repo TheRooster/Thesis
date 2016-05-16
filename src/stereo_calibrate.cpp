@@ -312,7 +312,7 @@ void Init_SBM(){
 	bm->setPreFilterCap(31);
 	//bm->setBlockSize(9); //block size to check
 //	bm->setMinDisparity(-32);
-	bm->setNumDisparities(192); //number of disparities
+	bm->setNumDisparities(128); //number of disparities
 	//bm->setTextureThreshold(10);
 //	bm->setUniquenessRatio(15);
 	bm->setSpeckleWindowSize(96);
