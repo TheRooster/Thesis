@@ -316,7 +316,7 @@ void Init_SBM(){
 	//bm->setTextureThreshold(10);
 //	bm->setUniquenessRatio(15);
 	bm->setSpeckleWindowSize(64);
-	bm->setSpeckleRange(128);
+	bm->setSpeckleRange(64);
 //	bm->setDisp12MaxDiff(1);
 
 }
