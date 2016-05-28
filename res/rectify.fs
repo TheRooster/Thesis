@@ -1,9 +1,12 @@
-//Simple passthrough fragment shader for rectifying
+#version 120
+//Simple Texturing shader for rectifying
 
 
-varying vec3 vertexColor;
+varying vec2 texCoord;
 
+uniform sampler2D Tex1;
 
 main(){
-	gl_fragColor = vertexColor;
+
+	gl_fragColor = texture(Tex1, texCoord);
 }

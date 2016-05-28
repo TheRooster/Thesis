@@ -19,6 +19,8 @@
 //GL Includes
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <glm.hpp>
+#include <vec2.hpp>
 #include <iostream>
 #include <math.h>
 
@@ -30,7 +32,7 @@
 #include <algorithm>
 
 
-bool USE_OPENGL=false;
+
 
 using namespace cv;
 using namespace std;
@@ -40,8 +42,13 @@ using namespace std;
 
 //Terrible, Nasty Global Variables
 //Needed GL Vars
-GLuint rectifyShader, disparityShader, program;
+GLuint rectifyShader, disparityShader;
+GLuint framebuffers[2];
+GLuint leftImage, rightImage;
 vector<int> indices;
+vector<int> indices2;
+
+GLuint vao;
 
 //CV Vars
 Mat camera1image1;
@@ -75,7 +82,6 @@ vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize);
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
 void GL_initialize();
 vector<int> genIndices(int picWidth, int picHeight);
-int calibrate();
 void opengl_remap();
 void Init_SBM();
 void Init_SGBM();
@@ -84,60 +90,6 @@ void Init_SGBM();
 
 int main(int argc, char *argv[]) {
 
-	//init our opengl stuff.
-//	GL_initialize();
-
-	if(calibrate() != 0)//run the calibration to retrieve our matrices for transformation
-	{
-		return -1;
-	}
-	//now that we've generated the rectification transforms for the images, let's rectify them
-	//Generate these first, as they remain constant as long as the cameras do.
-
-
-	//Mats used for remapping images to their rectified selves
-	Mat map11, map12, map21, map22;
-	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
-	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
-
-	//init the Stereo Block Matcher, needs only be done once
-	Init_SBM();
-
-	//from here we split, if we're using cpu, we use the remap function to remap the images.
-	//if we're using opengl we jump to our opengl rectify function.
-
-	Mat img1rectified, img2rectified;
-	namedWindow("LeftImageRectified", 1);
-	namedWindow("RightImageRectified", 1);
-	namedWindow("Disparity Map", 1);
-
-
-	if(USE_OPENGL == true){
-		//will need to read images in in a format opengl understands
-		opengl_remap();
-	}else{
-		//Read in from cameras eventually.
-		remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
-		remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
-
-		//Calc the Disparity map using Stereo BlockMatching
-		bm->compute(img1rectified, img2rectified, disp);
-		Mat dispVis;
-		cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
-		//Show the Results
-		imshow("LeftImageRectified", img1rectified);
-		imshow("RightImageRectified", img2rectified);
-		imshow("Disparity Map", dispVis);
-		waitKey(0);
-	}
-
-	return 0;
-
-}
-
-
-
-int calibrate(){
 	//initialize the size of the board to 6x9
 	Size boardSize(6, 9);
 
@@ -147,12 +99,7 @@ int calibrate(){
 	string camera2image1fn = "res/right01.jpg";
 	string camera2image2fn = "res/right02.jpg";
 
-	/*
-		string camera1image1fn = "res/myLeft01.jpg";
-		string camera1image2fn = "res/myLeft01.jpg";
-		string camera2image1fn = "res/myRight01.jpg";
-		string camera2image2fn = "res/myRight01.jpg";
-	 */
+
 
 
 	const float squareSize = 1.0f;
@@ -171,16 +118,6 @@ int calibrate(){
 		std::cerr << "All images must be the same size!" << std::endl;
 		return -1;
 	}
-//	namedWindow("Image11", 1);
-//	namedWindow("Image12", 1);
-//	namedWindow("Image21", 1);
-//	namedWindow("Image22", 1);
-
-
-	//imshow("Image11", camera1image1);
-	//imshow("Image12", camera1image2);
-	//imshow("Image21", camera2image1);
-	//imshow("Image22", camera2image2);
 
 
 	//we know the images are the same size, now find the chessboard corners in the first image
@@ -217,27 +154,6 @@ int calibrate(){
 	}
 
 
-	//display the images with the corners drawn on them, this is just a sanity check
-	//namedWindow("Corne11", 1);
-	//namedWindow("Corne12", 1);
-	//namedWindow("Corne21", 1);
-	//namedWindow("Corne22", 1);
-
-
-	//drawChessboardCorners(camera1image1, boardSize, camera1ImagePoints[0], true);
-	//imshow("Corne11", camera1image1);
-
-	//drawChessboardCorners(camera1image2, boardSize, camera1ImagePoints[1], true);
-	//imshow("Corne12", camera1image2);
-
-	//drawChessboardCorners(camera2image1, boardSize, camera2ImagePoints[0], true);
-	//imshow("Corne21", camera2image1);
-
-	//drawChessboardCorners(camera2image2, boardSize, camera2ImagePoints[1], true);
-	//imshow("Corne22", camera2image2);
-
-
-	//waitKey(0);
 	//initialize our fake 3D coordinate system, one for each set of images
 	vector<vector<Point3f> > objectPoints(2);
 
@@ -252,7 +168,7 @@ int calibrate(){
 
 
 	//init the output matrices for the stereoCalibrate step
-	
+
 
 	double error = stereoCalibrate(objectPoints, camera1ImagePoints, camera2ImagePoints,
 			cameraMatrices[0], distortionCoefficients[0],
@@ -275,7 +191,106 @@ int calibrate(){
 			imSize, rotationMatrix, translationVector, rotationMatrices[0], rotationMatrices[1], projectionMatrices[0], projectionMatrices[1],
 			disparityToDepth, 0, 0, cvSize(0, 0));
 
+
+	ofstream outfile;
+	outfile.open("res/CalibrationInfo.txt");
+	outfile << rotationMatrices[0] <<endl;
+	outfile << rotationMatrices[1] <<endl;
+	outfile << projectionMatrices[0] << endl;
+	outfile << projectionMatrices[1] << endl;
+	outfile.close();
+
+
+/*
+
+	//Mats used for remapping images to their rectified selves
+	Mat map11, map12, map21, map22;
+	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
+	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
+
+	//init the Stereo Block Matcher, needs only be done once
+	Init_SBM();
+
+	//from here we split, if we're using cpu, we use the remap function to remap the images.
+	//if we're using opengl we jump to our opengl rectify function.
+
+	Mat img1rectified, img2rectified;
+	namedWindow("LeftImageRectified", 1);
+	namedWindow("RightImageRectified", 1);
+	namedWindow("Disparity Map", 1);
+
+
+	remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
+	remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
+
+	//Calc the Disparity map using Stereo BlockMatching
+	bm->compute(img1rectified, img2rectified, disp);
+	Mat dispVis;
+	cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
+	//Show the Results
+	imshow("LeftImageRectified", img1rectified);
+	imshow("RightImageRectified", img2rectified);
+	imshow("Disparity Map", dispVis);
+	waitKey(0);
+
+
+
+
+
+	/*
+	//init stuff
+#if USE_OPENGL
+	try{
+		//Now init our opengl stuff, we need imSize to be initialized for this
+		GL_initialize();
+	}catch( const std::exception& e) { // caught by reference to base
+		std::cout << " a standard exception was caught, with message '" << e.what() << "'\n";
+	}
+#else
+	//Mats used for remapping images to their rectified selves
+		Mat map11, map12, map21, map22;
+		initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
+		initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
+
+		//init the Stereo Block Matcher, needs only be done once
+		Init_SBM();
+
+		//from here we split, if we're using cpu, we use the remap function to remap the images.
+		//if we're using opengl we jump to our opengl rectify function.
+
+		Mat img1rectified, img2rectified;
+		namedWindow("LeftImageRectified", 1);
+		namedWindow("RightImageRectified", 1);
+		namedWindow("Disparity Map", 1);
+#endif
+
+
+
+
+
+		//Remap the images
+#if USE_OPENGL
+	opengl_remap();
+#else
+	//Read in from cameras eventually.
+	remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
+	remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
+
+	//Calc the Disparity map using Stereo BlockMatching
+	bm->compute(img1rectified, img2rectified, disp);
+	Mat dispVis;
+	cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
+	//Show the Results
+	imshow("LeftImageRectified", img1rectified);
+	imshow("RightImageRectified", img2rectified);
+	imshow("Disparity Map", dispVis);
+	waitKey(0);
+#endif
+*/
+	return 0;
+
 }
+
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) {
 
@@ -297,11 +312,37 @@ vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) 
 
 void GL_initialize() {
 	//set up opengl window to render into
+	glutInitWindowSize(imSize.width, imSize.height);
+	glutCreateWindow("DepthMap");
+	glutFullScreen();
 
+	//Gen the framebuffers
+	glGenFramebuffers(2, &framebuffers);
+
+	//Gen and setup the Textures that we'll be rendering into
+	glGenTextures(1, &leftImage);
+	glGenTextures(1, &rightImage);
+
+	glBindTexture(GL_TEXTURE_2D, leftImage);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imSize.width, imSize.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, rightImage);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imSize.width, imSize.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//Set up our VAO's
+	init_VAO();
+
+
+	//Compile our shaders
 	rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
 	disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
-
-
 }
 
 void Init_SBM(){
@@ -311,15 +352,17 @@ void Init_SBM(){
 	//bm->setROI2(roi2);
 	bm->setPreFilterCap(31);
 	//bm->setBlockSize(9); //block size to check
-//	bm->setMinDisparity(-32);
+	//	bm->setMinDisparity(-32);
 	bm->setNumDisparities(128); //number of disparities
 	bm->setTextureThreshold(32);
-//	bm->setUniquenessRatio(15);
+	//	bm->setUniquenessRatio(15);
 	bm->setSpeckleWindowSize(96);
 	bm->setSpeckleRange(64);
-//	bm->setDisp12MaxDiff(1);
+	//	bm->setDisp12MaxDiff(1);
 
 }
+
+
 void Init_SGBM(){
 	sgbm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
 
@@ -336,6 +379,7 @@ void Init_SGBM(){
 
 
 }
+
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
 	// Create the shaders
@@ -446,7 +490,7 @@ GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 }
 
 vector<int> genIndices(int picWidth, int picHeight){
-	vector<int> temp(0);
+	vector<int> temp = new vector<int>();
 
 	for(int i = 0; i < picHeight; i ++){
 		for(int j = 0; j < picWidth -1; j++){
@@ -469,24 +513,129 @@ vector<int> genIndices(int picWidth, int picHeight){
 
 
 void Display(void){
-	// Clear
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	glUseProgram(rectifyShader);
+	GLint transformLoc = glGetUniformLocation(rectifyShader, "transformMatrix");
+	GLint projectionLoc = glGetUniformLocation(rectifyShader, "projectionMatrix");
+
+	//Left Image
+	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0]);
+	// Clear all attached buffers
+	glViewport(0, 0, imSize.width, imSize.height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
 
-	glUseProgram(program);
-	//glBindVertexArray(vao);
+	//set the matrices
+	glUniformMatrix4fv(transformLoc, 1, rotationMatrices[0]);
+	glUniformMatrix4fv(projectionLoc, 1, projectionMatrices[0]);
 
+	//render left image here
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
+/*
+	//Right Image
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1]);
+	glViewport(0, 0, imSize.width, imSize.height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//set the matrices
+	glUniformMatrix4fv(transformLoc, 1, rotationMatrices[1]);
+	glUniformMatrix4fv(projectionLoc, 1, projectionMatrices[1]);
+
+	//render right image here
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
 
+
+
+	/////////////////////////////////////////////////////
+	// Bind to default framebuffer again draw the depth map
+	// //////////////////////////////////////////////////
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Clear all relevant buffers
+	glViewport(0, 0, imSize.width, imSize.height);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Draw Screen
+	glUseProgram(disparityShader);
+
+
+
+
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, rightImage);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rightImage);
+
+*/
+}
+
+void init_VAO(){
+	//initialize the VAO
+	glGenVertexArrays(2, &vao);
+
+	glBindVertexArray(vao[0]);
+
+	unsigned int handle[3];
+	unsigned int handle2[3];
+
+	glGenBuffers(3, &handle);
+
+	std::vector<GLuint> tempVertices;
+	std::vector<GLfloat> tempUVs;
+    indices = genIndices(imSize.width, imSize.height);
+
+	for(int i = 0; i < imSize.height; i ++){
+		for(int j = 0; j < imSize.width; j++){
+			tempVertices.push_back(j);
+			tempVertices.push_back(i);
+
+			tempUVs.push_back(((GLfloat)imSize.width)/j);
+			tempUVs.push_back(((GLfloat)imSize.height)/i);
+		}
+	}
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
+	glBufferData(GL_ARRAY_BUFFER, tempVertices.size() * sizeof(GLfloat), &tempVertices[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // Vertex position
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle[1]);
+	glBufferData(GL_ARRAY_BUFFER, tempUVs.size() * sizeof(GLfloat), &tempUVs[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // UV position
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+
+	glBindVertexArray(vao[1]);
+	glGenBuffers(3, &handle2);
+
+	indices2 = genIndices(1,1);
+	int tmp[] = {0,0,1,0,0,1,1,1};
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle2[0]);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), &tmp[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // Vertex position
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle2[1]);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), &tmp[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // UV position
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle2[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(GLuint), &indices2[0], GL_STATIC_DRAW);
+
 	glBindVertexArray(0);
-
-
-	glutSwapBuffers();
-
 }
 
 void opengl_remap(){
-
+	//load the images into a texture
 
 }
 
