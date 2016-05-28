@@ -16,14 +16,6 @@
 
 
 
-//GL Includes
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <glm.hpp>
-#include <vec2.hpp>
-#include <iostream>
-#include <math.h>
-
 
 #include <string>
 #include <vector>
@@ -38,7 +30,7 @@ using namespace cv;
 using namespace std;
 
 
-
+#if 0
 
 //Terrible, Nasty Global Variables
 //Needed GL Vars
@@ -49,6 +41,7 @@ vector<int> indices;
 vector<int> indices2;
 
 GLuint vao;
+#endif
 
 //CV Vars
 Mat camera1image1;
@@ -79,10 +72,10 @@ Mat disp, disp8, disparityVis;
 
 
 vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize);
-GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
+//GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
 void GL_initialize();
 vector<int> genIndices(int picWidth, int picHeight);
-void opengl_remap();
+//void opengl_remap();
 void Init_SBM();
 void Init_SGBM();
 
@@ -239,14 +232,12 @@ int main(int argc, char *argv[]) {
 
 	/*
 	//init stuff
-#if USE_OPENGL
 	try{
 		//Now init our opengl stuff, we need imSize to be initialized for this
 		GL_initialize();
 	}catch( const std::exception& e) { // caught by reference to base
 		std::cout << " a standard exception was caught, with message '" << e.what() << "'\n";
 	}
-#else
 	//Mats used for remapping images to their rectified selves
 		Mat map11, map12, map21, map22;
 		initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
@@ -262,16 +253,13 @@ int main(int argc, char *argv[]) {
 		namedWindow("LeftImageRectified", 1);
 		namedWindow("RightImageRectified", 1);
 		namedWindow("Disparity Map", 1);
-#endif
 
 
 
 
 
 		//Remap the images
-#if USE_OPENGL
 	opengl_remap();
-#else
 	//Read in from cameras eventually.
 	remap(camera1image1, img1rectified, map11, map12, INTER_LINEAR);
 	remap(camera2image1, img2rectified, map21, map22, INTER_LINEAR);
@@ -285,7 +273,6 @@ int main(int argc, char *argv[]) {
 	imshow("RightImageRectified", img2rectified);
 	imshow("Disparity Map", dispVis);
 	waitKey(0);
-#endif
 */
 	return 0;
 
@@ -309,7 +296,7 @@ vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize) 
 
 	return corners;
 }
-
+#if 0
 void GL_initialize() {
 	//set up opengl window to render into
 	glutInitWindowSize(imSize.width, imSize.height);
@@ -344,6 +331,7 @@ void GL_initialize() {
 	rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
 	disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
 }
+#endif
 
 void Init_SBM(){
 	bm = StereoBM::create(64, 11); //create the StereoBM Object
@@ -380,6 +368,7 @@ void Init_SGBM(){
 
 }
 
+#if 0
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
 	// Create the shaders
@@ -638,4 +627,4 @@ void opengl_remap(){
 	//load the images into a texture
 
 }
-
+#endif

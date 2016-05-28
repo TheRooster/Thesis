@@ -11,7 +11,7 @@ run: install
 	./bin/thesis
 
 calib:
-	g++ -o camera_calib src/main.cpp  $(cflags) $(openCVlibs) $(openGLlibs) 
+	g++ -o camera_calib src/stereo_calibrate.cpp  $(cflags) $(openCVlibs)
 
 install: thesis
 	mv ./thesis ./bin/thesis
