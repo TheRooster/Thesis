@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
 
 	for(int i = 0; i < 4; i ++){
 		for(int j = 0; j < 4; j ++){
-			outfile<< projectionMatrices[0].at<double>(i,j) << ' ';
+			outfile<< projectionMatrices[1].at<double>(i,j) << ' ';
 		}
 		outfile << endl;
 	}
