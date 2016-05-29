@@ -5,6 +5,8 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/ximgproc.hpp"
 
+#include <iostream>
+#include <fstream>
 
 
 using namespace cv;
@@ -21,7 +23,7 @@ int main(){
 
 
 	//open file and read in values
-	ifstream infile;
+	std::ifstream infile;
 	infile.open("res/CalibrationInfo.txt");
 
 	double a, b, c;
@@ -63,15 +65,15 @@ int main(){
 	projectionMatrices[1] = Mat(4, 4, CV_64F, arr2);
 
 
-	cout << rotationMatrices[0] << endl;
-	cout << rotationMatrices[1] << endl;
-	cout << projectionMatrices[0] << endl;
-	cout << projectionMatrices[0] << endl;
+	std::cout << rotationMatrices[0] << endl;
+	std::cout << rotationMatrices[1] << endl;
+	std::cout << projectionMatrices[0] << endl;
+	std::cout << projectionMatrices[0] << endl;
 
 
 
 	return 0;
-
+#if 0
 	infile.close();
 
 
@@ -101,4 +103,5 @@ int main(){
 		imshow("Disparity Map", dispVis);
 		waitKey(0);
 	}
+#endif
 }
