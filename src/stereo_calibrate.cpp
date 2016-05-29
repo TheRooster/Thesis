@@ -187,10 +187,11 @@ int main(int argc, char *argv[]) {
 
 	ofstream outfile;
 	outfile.open("res/CalibrationInfo.txt");
-	outfile << rotationMatrices[0] <<endl;
-	outfile << rotationMatrices[1] <<endl;
-	outfile << projectionMatrices[0] << endl;
-	outfile << projectionMatrices[1] << endl;
+	outfile<< rotationMatrices[0].data <<endl;
+	outfile << rotationMatrices[0].data <<endl;
+	outfile << rotationMatrices[1].data <<endl;
+	outfile << projectionMatrices[0].data << endl;
+	outfile << projectionMatrices[1].data << endl;
 	outfile.close();
 
 
