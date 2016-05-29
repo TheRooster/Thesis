@@ -76,8 +76,7 @@ vector<Point3f> Create3DChessboardCoordinates(Size boardSize, float squareSize);
 void GL_initialize();
 vector<int> genIndices(int picWidth, int picHeight);
 //void opengl_remap();
-void Init_SBM();
-void Init_SGBM();
+
 
 
 
@@ -218,6 +217,21 @@ int main(int argc, char *argv[]) {
 		outfile << endl;
 	}
 	outfile << endl;
+
+
+	for(int i = 0; i < 5; i ++){
+
+		outfile<< distortionCoefficients[0].at<double>(i) << endl;
+	}
+	outfile << endl;
+
+	for(int i = 0; i < 5; i ++){
+
+		outfile<< distortionCoefficients[1].at<double>(i) << endl;
+	}
+	outfile << endl;
+
+
 	outfile.close();
 
 
@@ -360,40 +374,7 @@ void GL_initialize() {
 }
 #endif
 
-void Init_SBM(){
-	bm = StereoBM::create(64, 11); //create the StereoBM Object
 
-	//bm->setROI1(); //usable area in rectified image
-	//bm->setROI2(roi2);
-	bm->setPreFilterCap(31);
-	//bm->setBlockSize(9); //block size to check
-	//	bm->setMinDisparity(-32);
-	bm->setNumDisparities(128); //number of disparities
-	bm->setTextureThreshold(32);
-	//	bm->setUniquenessRatio(15);
-	bm->setSpeckleWindowSize(96);
-	bm->setSpeckleRange(64);
-	//	bm->setDisp12MaxDiff(1);
-
-}
-
-
-void Init_SGBM(){
-	sgbm = StereoSGBM::create(0, 16, 3); //create the StereoBM Object
-
-
-	sgbm->setPreFilterCap(63);
-	sgbm->setBlockSize(3);
-	sgbm->setP1(72);
-	sgbm->setP2(256);
-	sgbm->setMinDisparity(0);
-	sgbm->setNumDisparities(192);
-	sgbm->setUniquenessRatio(10);
-	sgbm->setSpeckleRange(8);
-	sgbm->setDisp12MaxDiff(1);
-
-
-}
 
 #if 0
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
