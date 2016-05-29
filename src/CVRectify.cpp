@@ -17,6 +17,7 @@ Mat camera2image;
 Size imSize;
 Mat rotationMatrices[2];
 Mat projectionMatrices[2];
+Mat distortionCoefficients[2];
 
 void Init_SBM();
 void Init_SGBM();
@@ -37,43 +38,62 @@ int main(){
 		arr[i][2] = c;
 	}
 	rotationMatrices[0] = Mat(3, 3, CV_64F, arr);
-	
+
 	double arr1[3][3];
 	for(int i = 0; i < 3; i ++){
-			infile >> a >> b >> c;
-			arr1[i][0] = a;
-			arr1[i][1] = b;
-			arr1[i][2] = c;
+		infile >> a >> b >> c;
+		arr1[i][0] = a;
+		arr1[i][1] = b;
+		arr1[i][2] = c;
 	}
 	rotationMatrices[1] = Mat(3, 3, CV_64F, arr1);
 
 	double d;
 	double arr2[4][4];
 	for(int i = 0; i < 4; i ++){
-			infile >> a >> b >> c >> d;
-			arr2[i][0] = a;
-			arr2[i][1] = b;
-			arr2[i][2] = c;
-			arr2[i][3] = d;
+		infile >> a >> b >> c >> d;
+		arr2[i][0] = a;
+		arr2[i][1] = b;
+		arr2[i][2] = c;
+		arr2[i][3] = d;
 	}
 	projectionMatrices[0] = Mat(4, 4, CV_64F, arr2);
-	
+
 	double arr3[4][4];
 	for(int i = 0; i < 4; i ++){
-			infile >> a >> b >> c >> d;
-			arr3[i][0] = a;
-			arr3[i][1] = b;
-			arr3[i][2] = c;
-			arr3[i][3] = d;
+		infile >> a >> b >> c >> d;
+		arr3[i][0] = a;
+		arr3[i][1] = b;
+		arr3[i][2] = c;
+		arr3[i][3] = d;
 	}
 	projectionMatrices[1] = Mat(4, 4, CV_64F, arr3);
+
+
+	double arr4[8];
+	for(int i = 0; i < 8; i ++)
+	{
+		infile >> arr4[i];
+	}
+
+	distortionCoefficients[0] = Mat(8, 1, CV_64F, arr4);
+
+	double arr5[8];
+	for(int i = 0; i < 8; i ++)
+	{
+		infile >> arr5[i];
+	}
+
+	distortionCoefficients[0] = Mat(8, 1, CV_64F, arr4);
+
 
 
 	cout << rotationMatrices[0] << endl;
 	cout << rotationMatrices[1] << endl;
 	cout << projectionMatrices[0] << endl;
 	cout << projectionMatrices[1] << endl;
-
+	cout << distortionCoefficients[0] << endl;
+	cout << distortionCoefficients[1] << endl;
 	infile.close();
 
 
