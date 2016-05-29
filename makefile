@@ -13,6 +13,10 @@ run: install
 calib:
 	g++ -o camera_calib src/stereo_calibrate.cpp  $(cflags) $(openCVlibs)
 
+cvRect:
+	g++ -o cv_rectify src/CVRectify.cpp $(cflags) $(openCVlibs)
+
+
 install: thesis
 	mv ./thesis ./bin/thesis
 
