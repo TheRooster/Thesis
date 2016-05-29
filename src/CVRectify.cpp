@@ -65,10 +65,17 @@ int main(){
 	projectionMatrices[1] = Mat(4, 4, CV_64F, arr2);
 
 
+<<<<<<< HEAD
 	std::cout << rotationMatrices[0] << endl;
 	std::cout << rotationMatrices[1] << endl;
 	std::cout << projectionMatrices[0] << endl;
 	std::cout << projectionMatrices[0] << endl;
+=======
+	cout << rotationMatrices[0] << endl;
+	cout << rotationMatrices[1] << endl;
+	cout << projectionMatrices[0] << endl;
+	cout << projectionMatrices[1] << endl;
+>>>>>>> 4e98e656b568784b079eafc3fc8124d4420dd626
 
 
 
