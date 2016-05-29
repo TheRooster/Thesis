@@ -189,15 +189,35 @@ int main(int argc, char *argv[]) {
 	outfile.open("res/CalibrationInfo.txt");
 	for(int i = 0; i < 3; i ++){
 		for(int j = 0; j < 3; j ++){
-			outfile<< rotationMatrices[0].at<double>(i,j);
+			outfile<< rotationMatrices[0].at<double>(i,j) << ' ';
 		}
 		outfile << endl;
 	}
 	outfile << endl;
-	//outfile << rotationMatrices[0] <<endl;
-	//outfile << rotationMatrices[1] <<endl;
-	//outfile << projectionMatrices[0] << endl;
-	//outfile << projectionMatrices[1] << endl;
+
+	for(int i = 0; i < 3; i ++){
+		for(int j = 0; j < 3; j ++){
+			outfile<< rotationMatrices[1].at<double>(i,j) << ' ';
+		}
+		outfile << endl;
+	}
+	outfile << endl;
+
+	for(int i = 0; i < 4; i ++){
+		for(int j = 0; j < 4; j ++){
+			outfile<< projectionMatrices[0].at<double>(i,j) << ' ';
+		}
+		outfile << endl;
+	}
+	outfile << endl;
+
+	for(int i = 0; i < 4; i ++){
+		for(int j = 0; j < 4; j ++){
+			outfile<< projectionMatrices[0].at<double>(i,j) << ' ';
+		}
+		outfile << endl;
+	}
+	outfile << endl;
 	outfile.close();
 
 
