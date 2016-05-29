@@ -66,7 +66,7 @@ int main(){
 	cout << rotationMatrices[0] << endl;
 	cout << rotationMatrices[1] << endl;
 	cout << projectionMatrices[0] << endl;
-	cout << projectionMatrices[0] << endl;
+	cout << projectionMatrices[1] << endl;
 
 
 
