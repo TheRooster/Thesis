@@ -19,6 +19,10 @@ Mat rotationMatrices[2];
 Mat projectionMatrices[2];
 Mat distortionCoefficients[2];
 
+Ptr<StereoBM> bm;
+Ptr<StereoSGBM> sgbm;
+
+
 void Init_SBM();
 void Init_SGBM();
 
@@ -84,7 +88,7 @@ int main(){
 		infile >> arr5[i];
 	}
 
-	distortionCoefficients[0] = Mat(8, 1, CV_64F, arr4);
+	distortionCoefficients[1] = Mat(8, 1, CV_64F, arr5);
 
 
 
@@ -95,7 +99,9 @@ int main(){
 	cout << distortionCoefficients[0] << endl;
 	cout << distortionCoefficients[1] << endl;
 	infile.close();
+return 0;
 
+#if 0
 
 	//Mats used for remapping images to their rectified selves
 	Mat map11, map12, map21, map22;
@@ -120,6 +126,7 @@ int main(){
 		imshow("Disparity Map", dispVis);
 		waitKey(0);
 	}
+#endif
 }
 
 void Init_SBM(){

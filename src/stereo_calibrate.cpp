@@ -219,13 +219,13 @@ int main(int argc, char *argv[]) {
 	outfile << endl;
 
 
-	for(int i = 0; i < 5; i ++){
+	for(int i = 0; i < 8; i ++){
 
 		outfile<< distortionCoefficients[0].at<double>(i) << endl;
 	}
 	outfile << endl;
 
-	for(int i = 0; i < 5; i ++){
+	for(int i = 0; i < 8; i ++){
 
 		outfile<< distortionCoefficients[1].at<double>(i) << endl;
 	}
