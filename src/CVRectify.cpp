@@ -35,14 +35,15 @@ int main(){
 		arr[i][2] = c;
 	}
 	rotationMatrices[0] = Mat(3, 3, CV_64F, arr);
-
+	
+	double arr1[3][3];
 	for(int i = 0; i < 3; i ++){
 			infile >> a >> b >> c;
-			arr[i][0] = a;
-			arr[i][1] = b;
-			arr[i][2] = c;
+			arr1[i][0] = a;
+			arr1[i][1] = b;
+			arr1[i][2] = c;
 	}
-	rotationMatrices[1] = Mat(3, 3, CV_64F, arr);
+	rotationMatrices[1] = Mat(3, 3, CV_64F, arr1);
 
 	double d;
 	double arr2[4][4];
@@ -54,28 +55,22 @@ int main(){
 			arr2[i][3] = d;
 	}
 	projectionMatrices[0] = Mat(4, 4, CV_64F, arr2);
-
+	
+	double arr3[4][4];
 	for(int i = 0; i < 4; i ++){
 			infile >> a >> b >> c >> d;
-			arr2[i][0] = a;
-			arr2[i][1] = b;
-			arr2[i][2] = c;
-			arr2[i][3] = d;
+			arr3[i][0] = a;
+			arr3[i][1] = b;
+			arr3[i][2] = c;
+			arr3[i][3] = d;
 	}
-	projectionMatrices[1] = Mat(4, 4, CV_64F, arr2);
+	projectionMatrices[1] = Mat(4, 4, CV_64F, arr3);
 
 
-<<<<<<< HEAD
-	std::cout << rotationMatrices[0] << endl;
-	std::cout << rotationMatrices[1] << endl;
-	std::cout << projectionMatrices[0] << endl;
-	std::cout << projectionMatrices[0] << endl;
-=======
 	cout << rotationMatrices[0] << endl;
 	cout << rotationMatrices[1] << endl;
 	cout << projectionMatrices[0] << endl;
 	cout << projectionMatrices[1] << endl;
->>>>>>> 4e98e656b568784b079eafc3fc8124d4420dd626
 
 
 
