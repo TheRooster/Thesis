@@ -33,6 +33,11 @@ int main(){
 	//open file and read in values
 	std::ifstream infile;
 	infile.open("res/CalibrationInfo.txt");
+	int w, h;
+	//image size
+	infile >> w >> h ;
+	imSize.height = h;
+	imSize.width = w;
 
 	double a, b, c;
 	double arr[3][3];
@@ -123,7 +128,7 @@ int main(){
 	infile.close();
 	return 0;
 
-#if 0
+
 
 //Mats used for remapping images to their rectified selves
 	Mat map11, map12, map21, map22;
@@ -136,7 +141,7 @@ int main(){
 	Mat img1rectified, img2rectified, disp, dispVis;
 	namedWindow("Disparity Map", 1);
 
-	while(true){
+	//while(true){
 
 		remap(camera1image, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image, img2rectified, map21, map22, INTER_LINEAR);
@@ -147,8 +152,7 @@ int main(){
 		cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
 		imshow("Disparity Map", dispVis);
 		waitKey(0);
-	}
-#endif
+	//}
 }
 
 void Init_SBM(){
