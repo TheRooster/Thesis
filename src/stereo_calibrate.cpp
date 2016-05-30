@@ -194,12 +194,14 @@ int main(int argc, char *argv[]) {
 		}
 		outfile << endl;
 	}
+	outfile << endl;
 	for(int i = 0; i < 3; i ++){
 		for(int j = 0; j < 3; j ++){
 			outfile<< cameraMatrices[1].at<double>(i,j) << ' ';
 		}
 		outfile << endl;
 	}
+	outfile << endl;
 	//rotation matrices
 	for(int i = 0; i < 3; i ++){
 		for(int j = 0; j < 3; j ++){
