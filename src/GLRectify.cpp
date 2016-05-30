@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+=======
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <GL/freeglut.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
+#include "bcm_host.h"
+>>>>>>> branch 'master' of https://github.com/TheRooster/Thesis.git
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -6,11 +16,18 @@
 
 #define DEBUG 0
 
+
+
+
+
+
+
+
 using namespace std;
 using namespace glm;
 
 
-int imHeight, imWidth;
+unsigned int imHeight, imWidth;
 //Needed GL Vars
 mat3 camera1;
 mat3 camera2;
@@ -193,8 +210,11 @@ void Draw ( ESContext *esContext )
 
 }
 
+#if 0
+void Display(void){
+	return;
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-void Display(ESContext *esContext){
 
 	UserData *userData = esContext->userData;
 
@@ -257,7 +277,9 @@ void Display(ESContext *esContext){
 	glBindTexture(GL_TEXTURE_2D, rightImage);
 
 	 */
+
 }
+#endif
 
 int Init ( ESContext *esContext )
 {
@@ -305,6 +327,7 @@ int Init ( ESContext *esContext )
 
 
 
+
 #if 0
 	glutInit(argc, argv);
 	glewExperimental = GL_TRUE;
@@ -341,7 +364,7 @@ int Init ( ESContext *esContext )
 	//disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
 }
 
-
+#if 0
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
 	// Create the shaders
@@ -552,4 +575,4 @@ vector<int> genIndices(int picWidth, int picHeight){
 	return temp;
 }
 
-
+#endif
