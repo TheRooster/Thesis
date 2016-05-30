@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
 	outfile << endl;
 
 	//projection matrices
-	for(int i = 0; i < 4; i ++){
+	for(int i = 0; i < 3; i ++){
 		for(int j = 0; j < 4; j ++){
 			outfile<< projectionMatrices[0].at<double>(i,j) << ' ';
 		}
@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
 	}
 	outfile << endl;
 
-	for(int i = 0; i < 4; i ++){
+	for(int i = 0; i < 3; i ++){
 		for(int j = 0; j < 4; j ++){
 			outfile<< projectionMatrices[1].at<double>(i,j) << ' ';
 		}

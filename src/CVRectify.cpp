@@ -79,25 +79,25 @@ int main(){
 	rotationMatrices[1] = Mat(3, 3, CV_64F, arr3);
 	//projection matrices
 	double d;
-	double arr4[4][4];
-	for(int i = 0; i < 4; i ++){
+	double arr4[3][4];
+	for(int i = 0; i < 3; i ++){
 		infile >> a >> b >> c >> d;
 		arr4[i][0] = a;
 		arr4[i][1] = b;
 		arr4[i][2] = c;
 		arr4[i][3] = d;
 	}
-	projectionMatrices[0] = Mat(4, 4, CV_64F, arr4);
+	projectionMatrices[0] = Mat(3, 4, CV_64F, arr4);
 
-	double arr5[4][4];
-	for(int i = 0; i < 4; i ++){
+	double arr5[3][4];
+	for(int i = 0; i < 3; i ++){
 		infile >> a >> b >> c >> d;
 		arr5[i][0] = a;
 		arr5[i][1] = b;
 		arr5[i][2] = c;
 		arr5[i][3] = d;
 	}
-	projectionMatrices[1] = Mat(4, 4, CV_64F, arr5);
+	projectionMatrices[1] = Mat(3, 4, CV_64F, arr5);
 
 	//distortion coefficients
 	double arr6[8];
