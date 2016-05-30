@@ -1,10 +1,14 @@
-#include <GL/gl.h>;
-#include <GL/glew.h>;
-#include <GL/freeglut.h>;
-#include <glm.hpp>;
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/freeglut.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <iostream>
+#include <fstream>
+#include <vector>
 
-#include <iostream>;
-#include <fstream>;
+
+#define DEBUG 0
 
 using namespace std;
 using namespace glm;
@@ -12,32 +16,33 @@ using namespace glm;
 
 int imHeight, imWidth;
 //Needed GL Vars
-f64mat3 camera1;
-f64mat3 camera2;
+mat3 camera1;
+mat3 camera2;
 
-f64mat3 rotation1;
-f64mat3 rotation2;
+mat3 rotation1;
+mat3 rotation2;
 
-f64mat3x4 projection1;
-f64mat3x4 projection2;
+mat3x4 projection1;
+mat3x4 projection2;
 
 GLuint rectifyShader, disparityShader;
-GLuint framebuffers[2];
+GLuint framebuffers;
 GLuint leftImage, rightImage;
 GLuint leftImageRectified, rightImageRectified;
-vector<int> indices;
-vector<int> indices2;
 
-GLuint vao;
+std::vector<int> indices;
+std::vector<int> indices2;
 
+GLuint vao1;
+GLuint vao2;
 
-void GL_initialize();
+void GL_initialize(int* argc, char ** argv);
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
 void init_VAO();
 vector<int> genIndices(int picWidth, int picHeight);
 
 
-int main(){
+int main(int argc, char ** argv){
 
 
 	//open file and read in values
@@ -97,22 +102,28 @@ int main(){
 	}
 
 	infile.close();
-
-	cout << camera1 << endl;
-	cout << camera2 << endl;
-	cout << rotation1 << endl;
-	cout << rotation2 << endl;
-	cout << projection1<< endl;
-	cout << projection2 << endl;
-
+#if DEBUG
+	cout << glm::to_string(camera1) << endl;
+	cout << glm::to_string(camera2) << endl;
+	cout << glm::to_string(rotation1) << endl;
+	cout << glm::to_string(rotation2) << endl;
+	cout << glm::to_string(projection1) << endl;
+	cout << glm::to_string(projection2) << endl;
+#endif
 	//done reading in needed vars, now lets init our OpenGl Stuff
+
+	try{
+		GL_initialize(&argc, argv);	
+	}catch(exception& e){
+		cout << e.what() << endl;	
+	}
 	return 0;
 
 }
 
 
 void Display(void){
-
+	return;
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	glUseProgram(rectifyShader);
@@ -122,12 +133,12 @@ void Display(void){
 	//Left Image
 	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0]);
 	// Clear all attached buffers
-	glViewport(0, 0, imSize.width, imSize.height);
+	glViewport(0, 0, imWidth, imHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//set the matrices
-	glUniformMatrix4fv(transformLoc, 1, rotationMatrices[0]);
-	glUniformMatrix4fv(projectionLoc, 1, projectionMatrices[0]);
+	glUniformMatrix4fv(transformLoc, 1,GL_FALSE, (GLfloat *)&rotation1[0]);
+	glUniformMatrix4fv(projectionLoc, 1,GL_FALSE, (GLfloat *)&projection1[0]);
 
 	//render left image here
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
@@ -171,38 +182,40 @@ void Display(void){
 }
 
 
-void GL_initialize() {
+void GL_initialize(int *argc, char ** argv) {
+	glutInit(argc, argv);
+	glewExperimental = GL_TRUE;
+	glewInit();
 	//set up opengl window to render into
-	glutInitWindowSize(imSize.width, imSize.height);
+	glutInitWindowSize(imWidth, imHeight);
 	glutCreateWindow("DepthMap");
-	glutFullScreen();
-
+	//glutFullScreen();
 	//Gen the framebuffers
-	glGenFramebuffers(2, &framebuffers);
+	//glGenFramebuffers(2, &framebuffers);
 
 	//Gen and setup the Textures that we'll be rendering into
-	glGenTextures(1, &leftImage);
-	glGenTextures(1, &rightImage);
+	//glGenTextures(1, &leftImage);
+	//glGenTextures(1, &rightImage);
 
-	glBindTexture(GL_TEXTURE_2D, leftImageRectified);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glBindTexture(GL_TEXTURE_2D, leftImageRectified);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glBindTexture(GL_TEXTURE_2D, rightImageRectified);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//	glBindTexture(GL_TEXTURE_2D, rightImageRectified);
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+//	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//Set up our VAO's
 	init_VAO();
 
 
 	//Compile our shaders
-	rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
-	disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
+	//rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
+	//disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
 }
 
 
@@ -316,27 +329,34 @@ GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 }
 
 void init_VAO(){
+	
 	//initialize the VAO
-	glGenVertexArrays(2, &vao);
-
-	glBindVertexArray(vao[0]);
-
-	unsigned int handle[3];
-	unsigned int handle2[3];
-
-	glGenBuffers(3, &handle);
+	glGenVertexArrays(1,&vao1);
+	cout << "VAO Init done " << endl;
+	glBindVertexArray(vao1);
+	GLuint handle[3];
+	GLuint handle2[3];
+	glGenBuffers(3, handle);
 
 	std::vector<GLuint> tempVertices;
 	std::vector<GLfloat> tempUVs;
-	indices = genIndices(imSize.width, imSize.height);
+	indices = genIndices(imWidth, imHeight);
 
-	for(int i = 0; i < imSize.height; i ++){
-		for(int j = 0; j < imSize.width; j++){
+	cout << "indices: ";
+
+	for(int i: indices)
+	{
+		cout << i << ' ';
+	}
+	cout << endl;
+
+	for(int i = 0; i < imHeight; i ++){
+		for(int j = 0; j < imWidth; j++){
 			tempVertices.push_back(j);
 			tempVertices.push_back(i);
 
-			tempUVs.push_back(((GLfloat)imSize.width)/j);
-			tempUVs.push_back(((GLfloat)imSize.height)/i);
+			tempUVs.push_back(((GLfloat)imWidth)/j);
+			tempUVs.push_back(((GLfloat)imHeight)/i);
 		}
 	}
 
@@ -354,11 +374,20 @@ void init_VAO(){
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
-
-	glBindVertexArray(vao[1]);
-	glGenBuffers(3, &handle2);
+	
+	glGenVertexArrays(1, &vao2);
+	glBindVertexArray(vao2);
+	glGenBuffers(3, handle2);
 
 	indices2 = genIndices(1,1);
+	cout << "indices: ";
+
+	for(int i: indices2)
+	{
+		cout << i << ' ';
+	}
+	cout << endl;
+
 	int tmp[] = {0,0,1,0,0,1,1,1};
 
 	glBindBuffer(GL_ARRAY_BUFFER, handle2[0]);
@@ -380,7 +409,7 @@ void init_VAO(){
 
 
 vector<int> genIndices(int picWidth, int picHeight){
-	vector<int> temp = new vector<int>();
+	vector<int> temp;
 
 	for(int i = 0; i < picHeight; i ++){
 		for(int j = 0; j < picWidth -1; j++){
@@ -399,4 +428,5 @@ vector<int> genIndices(int picWidth, int picHeight){
 	}
 	return temp;
 }
+
 
