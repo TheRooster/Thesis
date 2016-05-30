@@ -186,6 +186,21 @@ int main(int argc, char *argv[]) {
 
 	ofstream outfile;
 	outfile.open("res/CalibrationInfo.txt");
+
+	//camera matrices
+	for(int i = 0; i < 3; i ++){
+		for(int j = 0; j < 3; j ++){
+			outfile<< cameraMatrices[0].at<double>(i,j) << ' ';
+		}
+		outfile << endl;
+	}
+	for(int i = 0; i < 3; i ++){
+		for(int j = 0; j < 3; j ++){
+			outfile<< cameraMatrices[1].at<double>(i,j) << ' ';
+		}
+		outfile << endl;
+	}
+	//rotation matrices
 	for(int i = 0; i < 3; i ++){
 		for(int j = 0; j < 3; j ++){
 			outfile<< rotationMatrices[0].at<double>(i,j) << ' ';
@@ -202,6 +217,7 @@ int main(int argc, char *argv[]) {
 	}
 	outfile << endl;
 
+	//projection matrices
 	for(int i = 0; i < 4; i ++){
 		for(int j = 0; j < 4; j ++){
 			outfile<< projectionMatrices[0].at<double>(i,j) << ' ';
@@ -218,7 +234,7 @@ int main(int argc, char *argv[]) {
 	}
 	outfile << endl;
 
-
+	//distortion coeffiicients
 	for(int i = 0; i < 8; i ++){
 
 		outfile<< distortionCoefficients[0].at<double>(i) << endl;
@@ -235,7 +251,7 @@ int main(int argc, char *argv[]) {
 	outfile.close();
 
 
-/*
+	/*
 
 	//Mats used for remapping images to their rectified selves
 	Mat map11, map12, map21, map22;
@@ -314,7 +330,7 @@ int main(int argc, char *argv[]) {
 	imshow("RightImageRectified", img2rectified);
 	imshow("Disparity Map", dispVis);
 	waitKey(0);
-*/
+	 */
 	return 0;
 
 }
@@ -529,7 +545,7 @@ void Display(void){
 
 	//render left image here
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
-/*
+	/*
 	//Right Image
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1]);
 	glViewport(0, 0, imSize.width, imSize.height);
@@ -565,7 +581,7 @@ void Display(void){
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, rightImage);
 
-*/
+	 */
 }
 
 void init_VAO(){
@@ -581,7 +597,7 @@ void init_VAO(){
 
 	std::vector<GLuint> tempVertices;
 	std::vector<GLfloat> tempUVs;
-    indices = genIndices(imSize.width, imSize.height);
+	indices = genIndices(imSize.width, imSize.height);
 
 	for(int i = 0; i < imSize.height; i ++){
 		for(int j = 0; j < imSize.width; j++){

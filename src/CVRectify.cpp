@@ -15,6 +15,7 @@ using namespace std;
 Mat camera1image;
 Mat camera2image;
 Size imSize;
+Mat cameraMatrices[2];
 Mat rotationMatrices[2];
 Mat projectionMatrices[2];
 Mat distortionCoefficients[2];
@@ -35,13 +36,14 @@ int main(){
 
 	double a, b, c;
 	double arr[3][3];
+	//camera matrices
 	for(int i = 0; i < 3; i ++){
 		infile >> a >> b >> c;
 		arr[i][0] = a;
 		arr[i][1] = b;
 		arr[i][2] = c;
 	}
-	rotationMatrices[0] = Mat(3, 3, CV_64F, arr);
+	cameraMatrices[0] = Mat(3, 3, CV_64F, arr);
 
 	double arr1[3][3];
 	for(int i = 0; i < 3; i ++){
@@ -50,48 +52,68 @@ int main(){
 		arr1[i][1] = b;
 		arr1[i][2] = c;
 	}
-	rotationMatrices[1] = Mat(3, 3, CV_64F, arr1);
+	cameraMatrices[1] = Mat(3, 3, CV_64F, arr1);
 
-	double d;
-	double arr2[4][4];
-	for(int i = 0; i < 4; i ++){
-		infile >> a >> b >> c >> d;
+	//rotation matrices
+	double arr2[3][3];
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c;
 		arr2[i][0] = a;
 		arr2[i][1] = b;
 		arr2[i][2] = c;
-		arr2[i][3] = d;
 	}
-	projectionMatrices[0] = Mat(4, 4, CV_64F, arr2);
+	rotationMatrices[0] = Mat(3, 3, CV_64F, arr2);
 
-	double arr3[4][4];
-	for(int i = 0; i < 4; i ++){
-		infile >> a >> b >> c >> d;
+	double arr3[3][3];
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c;
 		arr3[i][0] = a;
 		arr3[i][1] = b;
 		arr3[i][2] = c;
-		arr3[i][3] = d;
 	}
-	projectionMatrices[1] = Mat(4, 4, CV_64F, arr3);
+	rotationMatrices[1] = Mat(3, 3, CV_64F, arr3);
+	//projection matrices
+	double d;
+	double arr4[4][4];
+	for(int i = 0; i < 4; i ++){
+		infile >> a >> b >> c >> d;
+		arr4[i][0] = a;
+		arr4[i][1] = b;
+		arr4[i][2] = c;
+		arr4[i][3] = d;
+	}
+	projectionMatrices[0] = Mat(4, 4, CV_64F, arr4);
 
+	double arr5[4][4];
+	for(int i = 0; i < 4; i ++){
+		infile >> a >> b >> c >> d;
+		arr5[i][0] = a;
+		arr5[i][1] = b;
+		arr5[i][2] = c;
+		arr5[i][3] = d;
+	}
+	projectionMatrices[1] = Mat(4, 4, CV_64F, arr5);
 
-	double arr4[8];
+	//distortion coefficients
+	double arr6[8];
 	for(int i = 0; i < 8; i ++)
 	{
-		infile >> arr4[i];
+		infile >> arr6[i];
 	}
 
-	distortionCoefficients[0] = Mat(8, 1, CV_64F, arr4);
+	distortionCoefficients[0] = Mat(8, 1, CV_64F, arr6);
 
-	double arr5[8];
+	double arr7[8];
 	for(int i = 0; i < 8; i ++)
 	{
-		infile >> arr5[i];
+		infile >> arr7[i];
 	}
 
-	distortionCoefficients[1] = Mat(8, 1, CV_64F, arr5);
+	distortionCoefficients[1] = Mat(8, 1, CV_64F, arr7);
 
 
-
+	cout << cameraMatrices[0] << endl;
+	cout << cameraMatrices[1] << endl;
 	cout << rotationMatrices[0] << endl;
 	cout << rotationMatrices[1] << endl;
 	cout << projectionMatrices[0] << endl;
@@ -99,11 +121,11 @@ int main(){
 	cout << distortionCoefficients[0] << endl;
 	cout << distortionCoefficients[1] << endl;
 	infile.close();
-return 0;
+	return 0;
 
 #if 0
 
-	//Mats used for remapping images to their rectified selves
+//Mats used for remapping images to their rectified selves
 	Mat map11, map12, map21, map22;
 	initUndistortRectifyMap(cameraMatrices[0], distortionCoefficients[0], rotationMatrices[0], projectionMatrices[0], imSize, CV_16SC2, map11, map12);
 	initUndistortRectifyMap(cameraMatrices[1], distortionCoefficients[1], rotationMatrices[1], projectionMatrices[1], imSize, CV_16SC2, map21, map22);
