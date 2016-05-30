@@ -1,0 +1,402 @@
+#include <GL/gl.h>;
+#include <GL/glew.h>;
+#include <GL/freeglut.h>;
+#include <glm.hpp>;
+
+#include <iostream>;
+#include <fstream>;
+
+using namespace std;
+using namespace glm;
+
+
+int imHeight, imWidth;
+//Needed GL Vars
+f64mat3 camera1;
+f64mat3 camera2;
+
+f64mat3 rotation1;
+f64mat3 rotation2;
+
+f64mat3x4 projection1;
+f64mat3x4 projection2;
+
+GLuint rectifyShader, disparityShader;
+GLuint framebuffers[2];
+GLuint leftImage, rightImage;
+GLuint leftImageRectified, rightImageRectified;
+vector<int> indices;
+vector<int> indices2;
+
+GLuint vao;
+
+
+void GL_initialize();
+GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
+void init_VAO();
+vector<int> genIndices(int picWidth, int picHeight);
+
+
+int main(){
+
+
+	//open file and read in values
+	std::ifstream infile;
+	infile.open("res/CalibrationInfo.txt");
+
+	infile >> imHeight >> imWidth;
+
+
+	double a, b, c;
+	//camera matrices
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c;
+		camera1[i][0] = a;
+		camera1[i][1] = b;
+		camera1[i][2] = c;
+	}
+
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c;
+		camera2[i][0] = a;
+		camera2[i][1] = b;
+		camera2[i][2] = c;
+	}
+
+	//rotation matrices
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c;
+		rotation1[i][0] = a;
+		rotation1[i][1] = b;
+		rotation1[i][2] = c;
+	}
+
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c;
+		rotation2[i][0] = a;
+		rotation2[i][1] = b;
+		rotation2[i][2] = c;
+	}
+
+	//projection matrices
+	double d;
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c >> d;
+		projection1[i][0] = a;
+		projection1[i][1] = b;
+		projection1[i][2] = c;
+		projection1[i][3] = d;
+	}
+
+	for(int i = 0; i < 3; i ++){
+		infile >> a >> b >> c >> d;
+		projection2[i][0] = a;
+		projection2[i][1] = b;
+		projection2[i][2] = c;
+		projection2[i][3] = d;
+	}
+
+	infile.close();
+
+	cout << camera1 << endl;
+	cout << camera2 << endl;
+	cout << rotation1 << endl;
+	cout << rotation2 << endl;
+	cout << projection1<< endl;
+	cout << projection2 << endl;
+
+	//done reading in needed vars, now lets init our OpenGl Stuff
+	return 0;
+
+}
+
+
+void Display(void){
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	glUseProgram(rectifyShader);
+	GLint transformLoc = glGetUniformLocation(rectifyShader, "transformMatrix");
+	GLint projectionLoc = glGetUniformLocation(rectifyShader, "projectionMatrix");
+
+	//Left Image
+	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0]);
+	// Clear all attached buffers
+	glViewport(0, 0, imSize.width, imSize.height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//set the matrices
+	glUniformMatrix4fv(transformLoc, 1, rotationMatrices[0]);
+	glUniformMatrix4fv(projectionLoc, 1, projectionMatrices[0]);
+
+	//render left image here
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
+	/*
+	//Right Image
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1]);
+	glViewport(0, 0, imSize.width, imSize.height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//set the matrices
+	glUniformMatrix4fv(transformLoc, 1, rotationMatrices[1]);
+	glUniformMatrix4fv(projectionLoc, 1, projectionMatrices[1]);
+
+	//render right image here
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
+
+
+
+	/////////////////////////////////////////////////////
+	// Bind to default framebuffer again draw the depth map
+	// //////////////////////////////////////////////////
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Clear all relevant buffers
+	glViewport(0, 0, imSize.width, imSize.height);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Draw Screen
+	glUseProgram(disparityShader);
+
+
+
+
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, rightImage);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rightImage);
+
+	 */
+}
+
+
+void GL_initialize() {
+	//set up opengl window to render into
+	glutInitWindowSize(imSize.width, imSize.height);
+	glutCreateWindow("DepthMap");
+	glutFullScreen();
+
+	//Gen the framebuffers
+	glGenFramebuffers(2, &framebuffers);
+
+	//Gen and setup the Textures that we'll be rendering into
+	glGenTextures(1, &leftImage);
+	glGenTextures(1, &rightImage);
+
+	glBindTexture(GL_TEXTURE_2D, leftImageRectified);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, rightImageRectified);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//Set up our VAO's
+	init_VAO();
+
+
+	//Compile our shaders
+	rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
+	disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
+}
+
+
+GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
+
+	// Create the shaders
+	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+	// Read the Vertex Shader code from the file
+	std::string VertexShaderCode;
+	std::ifstream VertexShaderStream(vertex_file, std::ios::in);
+	if (VertexShaderStream.is_open()) {
+		std::string Line = "";
+		while (getline(VertexShaderStream, Line))
+			VertexShaderCode += "\n" + Line;
+		VertexShaderStream.close();
+	}
+	else {
+
+		cerr << "Can not open " << vertex_file << ". No such file exists!" << endl;
+		return 0;
+	}
+
+	// Read the Fragment Shader code from the file
+	std::string FragmentShaderCode;
+	std::ifstream FragmentShaderStream(fragment_file, std::ios::in);
+	if (FragmentShaderStream.is_open()) {
+		std::string Line = "";
+		while (getline(FragmentShaderStream, Line))
+			FragmentShaderCode += "\n" + Line;
+		FragmentShaderStream.close();
+	}
+	else {
+
+		cerr << "Can not open " << fragment_file << ". No such file exists!" << endl;
+		return 0;
+	}
+
+	GLint Result = GL_FALSE;
+	int InfoLogLength;
+
+
+	// Compile Vertex Shader
+	cout << "Compiling shader : " << vertex_file << endl;
+	char const * VertexSourcePointer = VertexShaderCode.c_str();
+	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
+	glCompileShader(VertexShaderID);
+
+	// Check Vertex Shader
+	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+
+		GLchar* log = new GLchar[InfoLogLength + 1];
+
+		glGetShaderInfoLog(VertexShaderID, InfoLogLength, &InfoLogLength, log);
+
+		std::cerr << log << std::endl;
+		delete[] log;
+	}
+
+
+
+	// Compile Fragment Shader
+
+	cout << "Compiling shader : " << fragment_file << endl;
+	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
+	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
+	glCompileShader(FragmentShaderID);
+
+
+
+	// Check Fragment Shader
+	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		GLchar* log = new GLchar[InfoLogLength + 1];
+		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, log);
+		std::cerr << log << std::endl;
+		delete[] log;
+	}
+
+
+
+	// Link the program
+	cout << "Linking program" << endl;
+	GLuint ProgramID = glCreateProgram();
+	glAttachShader(ProgramID, VertexShaderID);
+	glAttachShader(ProgramID, FragmentShaderID);
+	glLinkProgram(ProgramID);
+
+	// Check the program
+	glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
+	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if (InfoLogLength > 0) {
+		GLchar* log = new GLchar[InfoLogLength + 1];
+		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, log);
+		std::cerr << log << std::endl;
+		delete[] log;
+	}
+
+
+	glDetachShader(ProgramID, VertexShaderID);
+	glDetachShader(ProgramID, FragmentShaderID);
+
+	glDeleteShader(VertexShaderID);
+	glDeleteShader(FragmentShaderID);
+
+	return ProgramID;
+}
+
+void init_VAO(){
+	//initialize the VAO
+	glGenVertexArrays(2, &vao);
+
+	glBindVertexArray(vao[0]);
+
+	unsigned int handle[3];
+	unsigned int handle2[3];
+
+	glGenBuffers(3, &handle);
+
+	std::vector<GLuint> tempVertices;
+	std::vector<GLfloat> tempUVs;
+	indices = genIndices(imSize.width, imSize.height);
+
+	for(int i = 0; i < imSize.height; i ++){
+		for(int j = 0; j < imSize.width; j++){
+			tempVertices.push_back(j);
+			tempVertices.push_back(i);
+
+			tempUVs.push_back(((GLfloat)imSize.width)/j);
+			tempUVs.push_back(((GLfloat)imSize.height)/i);
+		}
+	}
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
+	glBufferData(GL_ARRAY_BUFFER, tempVertices.size() * sizeof(GLfloat), &tempVertices[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // Vertex position
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle[1]);
+	glBufferData(GL_ARRAY_BUFFER, tempUVs.size() * sizeof(GLfloat), &tempUVs[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // UV position
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+
+	glBindVertexArray(vao[1]);
+	glGenBuffers(3, &handle2);
+
+	indices2 = genIndices(1,1);
+	int tmp[] = {0,0,1,0,0,1,1,1};
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle2[0]);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), &tmp[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // Vertex position
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, handle2[1]);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), &tmp[0], GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);  // UV position
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle2[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(GLuint), &indices2[0], GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+}
+
+
+vector<int> genIndices(int picWidth, int picHeight){
+	vector<int> temp = new vector<int>();
+
+	for(int i = 0; i < picHeight; i ++){
+		for(int j = 0; j < picWidth -1; j++){
+			if(i %2 == 0){//even rows
+				temp.push_back(i * picWidth + j);
+				temp.push_back((i * picWidth) + j + picWidth);
+				temp.push_back(i * picWidth + j + 1);
+			}
+			else{ //odd rows
+				temp.push_back(i * picWidth + j);
+				temp.push_back(i * picWidth + j + 1);
+				temp.push_back((i-1) * picWidth + j);
+			}
+		}
+
+	}
+	return temp;
+}
+

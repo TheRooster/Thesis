@@ -35,7 +35,7 @@ int main(){
 	infile.open("res/CalibrationInfo.txt");
 	int w, h;
 	//image size
-	infile >> w >> h ;
+	infile >> h >> w ;
 	imSize.height = h;
 	imSize.width = w;
 
