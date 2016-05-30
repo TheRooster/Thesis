@@ -116,7 +116,7 @@ int main(){
 
 	distortionCoefficients[1] = Mat(8, 1, CV_64F, arr7);
 
-
+	cout << imSize << endl;
 	cout << cameraMatrices[0] << endl;
 	cout << cameraMatrices[1] << endl;
 	cout << rotationMatrices[0] << endl;
@@ -126,7 +126,6 @@ int main(){
 	cout << distortionCoefficients[0] << endl;
 	cout << distortionCoefficients[1] << endl;
 	infile.close();
-	return 0;
 
 
 
@@ -142,13 +141,15 @@ int main(){
 	namedWindow("Disparity Map", 1);
 
 	//while(true){
-
+			
+		camera1image = imread("res/left02.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+		camera2image = imread("res/right02.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+		
 		remap(camera1image, img1rectified, map11, map12, INTER_LINEAR);
 		remap(camera2image, img2rectified, map21, map22, INTER_LINEAR);
 
 		//Calc the Disparity map using Stereo BlockMatching
 		bm->compute(img1rectified, img2rectified, disp);
-		Mat dispVis;
 		cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
 		imshow("Disparity Map", dispVis);
 		waitKey(0);
