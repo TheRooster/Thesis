@@ -3,6 +3,8 @@
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+#include "bcm_host.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -183,6 +185,59 @@ void Display(void){
 
 
 void GL_initialize(int *argc, char ** argv) {
+
+	bcm_host_init();
+
+
+	//Setup our window
+	static EGL_DISPMANX_WINDOW_T nativewindow;
+
+	   DISPMANX_ELEMENT_HANDLE_T dispman_element;
+	   DISPMANX_DISPLAY_HANDLE_T dispman_display;
+	   DISPMANX_UPDATE_HANDLE_T dispman_update;
+	   VC_RECT_T dst_rect;
+	   VC_RECT_T src_rect;
+
+
+
+	   // create an EGL window surface, passing context width/height
+	   success = graphics_get_display_size(0 /* LCD */,
+	                        &display_width, &display_height);
+	   if ( success < 0 )
+	   {
+	      return EGL_FALSE;
+	   }
+
+	   // You can hardcode the resolution here:
+
+
+	   dst_rect.x = 0;
+	   dst_rect.y = 0;
+	   dst_rect.width = imWidth;
+	   dst_rect.height = imHeight;
+
+	   src_rect.x = 0;
+	   src_rect.y = 0;
+	   src_rect.width = imWidth << 16;
+	   src_rect.height = imHeight << 16;
+
+	   dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+	   dispman_update = vc_dispmanx_update_start( 0 );
+
+	   dispman_element = vc_dispmanx_element_add ( dispman_update,
+	      dispman_display, 0/*layer*/, &dst_rect, 0/*src*/,
+	      &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/,
+	      0/*clamp*/, 0/*transform*/);
+
+	   nativewindow.element = dispman_element;
+	   nativewindow.width = imWidth;
+	   nativewindow.height = imHeight;
+	   vc_dispmanx_update_submit_sync( dispman_update );
+
+	   // Pass the window to the display that have been created
+	   // to the esContext:
+	   esContext->hWnd = &nativewindow;
+#if 0
 	glutInit(argc, argv);
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -211,7 +266,7 @@ void GL_initialize(int *argc, char ** argv) {
 
 	//Set up our VAO's
 	init_VAO();
-
+#endif
 
 	//Compile our shaders
 	//rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
