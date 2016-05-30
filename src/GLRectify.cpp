@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-=======
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <GL/freeglut.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
-#include "bcm_host.h"
->>>>>>> branch 'master' of https://github.com/TheRooster/Thesis.git
 #include <iostream>
 #include <fstream>
 #include <vector>
 
 #include "Common/esUtil.h"
+#include "glm/glm.hpp"
 
 #define DEBUG 0
 
@@ -206,7 +197,7 @@ GLuint CreateSimpleTexture2D( )
 
 void Draw ( ESContext *esContext )
 {
-   UserData *userData = esContext->userData;
+   UserData *userData =(UserData *)(esContext->userData);
    GLfloat vVertices[] = { -0.5f,  0.5f, 0.0f,  // Position 0
                             0.0f,  0.0f,        // TexCoord 0
                            -0.5f, -0.5f, 0.0f,  // Position 1
@@ -225,7 +216,7 @@ void Draw ( ESContext *esContext )
    glClear ( GL_COLOR_BUFFER_BIT );
 
    // Use the program object
-   glUseProgram ( userData->programObject );
+   glUseProgram ( userData->rectifyProgramObject );
 
    // Load the vertex position
    glVertexAttribPointer ( userData->positionLoc, 3, GL_FLOAT,
@@ -254,7 +245,7 @@ void Display(void){
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 
-	UserData *userData = esContext->userData;
+	UserData *userData =(UserData *)(esContext->userData);
 
 	GLfloat *vVertices = malloc(imHeight * imWidth * 2 * sizeof(GLfloat));
 	GLushort *indices = genIndices(imWidth, imHeight);
@@ -322,18 +313,18 @@ void Display(void){
 int Init ( ESContext *esContext )
 {
 	esContext->userData = malloc(sizeof(UserData));
-	UserData *userData = esContext->userData;
+	UserData *userData = (UserData *)(esContext->userData);
 
 	GLbyte vShaderStr[] =
 			"uniform mat4 transformMatrix; \n"
 			"uniform mat4 projectionMatrix;\n"
 			"uniform mat4 cameraMatrix;    \n"
-			"attribute vec2 a_Position;    \n"
+			"attribute vec4 a_Position;    \n"
 			"attribute vec2 a_texCoord;    \n"
 			"varying vec2 v_texCoord;      \n"
 			"void main()                   \n"
 			"{                             \n"
-			"   gl_Position = vec4(a_Position, 1.0f, 1.0f) * transformMatrix * projectionMatrix; \n"
+			"   gl_Position = a_Position;  \n"
 			"   v_texCoord = a_texCoord;   \n"
 			"}                             \n";
 
@@ -347,14 +338,14 @@ int Init ( ESContext *esContext )
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
-	userData->rectifyProgramObject = esLoadProgram ( vShaderStr, fShaderStr );
+	userData->rectifyProgramObject = esLoadProgram ((char *)vShaderStr,(char *)fShaderStr );
 
 	// Get the attribute locations
-	userData->positionLoc = glGetAttribLocation ( userData->programObject, "a_position" );
-	userData->texCoordLoc = glGetAttribLocation ( userData->programObject, "a_texCoord" );
+	userData->positionLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_position" );
+	userData->texCoordLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_texCoord" );
 
 	// Get the sampler location
-	userData->samplerLoc = glGetUniformLocation ( userData->programObject, "texture" );
+	userData->samplerLoc = glGetUniformLocation ( userData->rectifyProgramObject, "texture" );
 
 	// Load the texture
 	userData->textureId = CreateSimpleTexture2D ();
@@ -617,13 +608,13 @@ vector<int> genIndices(int picWidth, int picHeight){
 
 void ShutDown ( ESContext *esContext )
 {
-   UserData *userData = esContext->userData;
+   UserData *userData =(UserData *)(esContext->userData);
 
    // Delete texture object
    glDeleteTextures ( 1, &userData->textureId );
 
    // Delete program object
-   glDeleteProgram ( userData->programObject );
+   glDeleteProgram ( userData->rectifyProgramObject );
 
    free(esContext->userData);
 }
