@@ -1,5 +1,5 @@
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -12,11 +12,18 @@
 
 #define DEBUG 0
 
+
+
+
+
+
+
+
 using namespace std;
 using namespace glm;
 
 
-int imHeight, imWidth;
+unsigned int imHeight, imWidth;
 //Needed GL Vars
 mat3 camera1;
 mat3 camera2;
@@ -123,7 +130,7 @@ int main(int argc, char ** argv){
 
 }
 
-
+#if 0
 void Display(void){
 	return;
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -182,7 +189,7 @@ void Display(void){
 
 	 */
 }
-
+#endif
 
 void GL_initialize(int *argc, char ** argv) {
 
@@ -201,8 +208,8 @@ void GL_initialize(int *argc, char ** argv) {
 
 
 	   // create an EGL window surface, passing context width/height
-	   success = graphics_get_display_size(0 /* LCD */,
-	                        &display_width, &display_height);
+	   int success = graphics_get_display_size(0 /* LCD */,
+	                        &imWidth, &imHeight);
 	   if ( success < 0 )
 	   {
 	      return EGL_FALSE;
@@ -273,7 +280,7 @@ void GL_initialize(int *argc, char ** argv) {
 	//disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
 }
 
-
+#if 0
 GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
 	// Create the shaders
@@ -484,4 +491,4 @@ vector<int> genIndices(int picWidth, int picHeight){
 	return temp;
 }
 
-
+#endif
