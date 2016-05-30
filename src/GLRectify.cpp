@@ -1,14 +1,8 @@
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/freeglut.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
-#include "bcm_host.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
 
+#include "esUtil.h"
 
 #define DEBUG 0
 
@@ -27,22 +21,44 @@ mat3 rotation2;
 mat3x4 projection1;
 mat3x4 projection2;
 
-GLuint rectifyShader, disparityShader;
-GLuint framebuffers;
-GLuint leftImage, rightImage;
-GLuint leftImageRectified, rightImageRectified;
 
-std::vector<int> indices;
-std::vector<int> indices2;
+typedef struct
+{
+	// Handle to a program object
+	GLuint rectifyProgramObject;
+	GLuint disparityProgramObject;
 
-GLuint vao1;
-GLuint vao2;
 
-void GL_initialize(int* argc, char ** argv);
-GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
-void init_VAO();
-vector<int> genIndices(int picWidth, int picHeight);
+	// Attribute locations
+	GLint  positionLoc;
+	GLint  texCoordLoc;
 
+	// Sampler location
+	GLint samplerLoc;
+
+	// Texture handle
+	GLuint textureId;
+
+} UserData;
+
+
+//GLuint rectifyShader, disparityShader;
+//GLuint framebuffers;
+//GLuint leftImage, rightImage;
+//GLuint leftImageRectified, rightImageRectified;
+
+//std::vector<int> indices;
+//std::vector<int> indices2;
+
+//GLuint vao1;
+//GLuint vao2;
+
+//void GL_initialize(int* argc, char ** argv);
+//GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
+//void init_VAO();
+//vector<int> genIndices(int picWidth, int picHeight);
+void Draw ( ESContext *esContext );
+int Init ( ESContext *esContext );
 
 int main(int argc, char ** argv){
 
@@ -112,23 +128,83 @@ int main(int argc, char ** argv){
 	cout << glm::to_string(projection1) << endl;
 	cout << glm::to_string(projection2) << endl;
 #endif
-	//done reading in needed vars, now lets init our OpenGl Stuff
 
-	try{
-		GL_initialize(&argc, argv);	
-	}catch(exception& e){
-		cout << e.what() << endl;	
-	}
-	return 0;
+
+	//done reading in needed vars, now lets init our OpenGl Stuff
+	ESContext esContext;
+	UserData  userData;
+
+	esInitContext ( &esContext );
+	esContext.userData = &userData;
+
+	esCreateWindow ( &esContext, "Simple Texture 2D", imWidth, imHeight, ES_WINDOW_RGB );
+
+	if ( !Init ( &esContext ) )
+		return 0;
+
+	esRegisterDrawFunc ( &esContext, Draw );
+
+	esMainLoop ( &esContext );
+
+	ShutDown ( &esContext );
+}
+
+void Draw ( ESContext *esContext )
+{
+   UserData *userData = esContext->userData;
+   GLfloat vVertices[] = { -0.5f,  0.5f, 0.0f,  // Position 0
+                            0.0f,  0.0f,        // TexCoord 0
+                           -0.5f, -0.5f, 0.0f,  // Position 1
+                            0.0f,  1.0f,        // TexCoord 1
+                            0.5f, -0.5f, 0.0f,  // Position 2
+                            1.0f,  1.0f,        // TexCoord 2
+                            0.5f,  0.5f, 0.0f,  // Position 3
+                            1.0f,  0.0f         // TexCoord 3
+                         };
+   GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
+
+   // Set the viewport
+   glViewport ( 0, 0, esContext->width, esContext->height );
+
+   // Clear the color buffer
+   glClear ( GL_COLOR_BUFFER_BIT );
+
+   // Use the program object
+   glUseProgram ( userData->programObject );
+
+   // Load the vertex position
+   glVertexAttribPointer ( userData->positionLoc, 3, GL_FLOAT,
+                           GL_FALSE, 5 * sizeof(GLfloat), vVertices );
+   // Load the texture coordinate
+   glVertexAttribPointer ( userData->texCoordLoc, 2, GL_FLOAT,
+                           GL_FALSE, 5 * sizeof(GLfloat), &vVertices[3] );
+
+   glEnableVertexAttribArray ( userData->positionLoc );
+   glEnableVertexAttribArray ( userData->texCoordLoc );
+
+   // Bind the texture
+   glActiveTexture ( GL_TEXTURE0 );
+   glBindTexture ( GL_TEXTURE_2D, userData->textureId );
+
+   // Set the sampler texture unit to 0
+   glUniform1i ( userData->samplerLoc, 0 );
+
+   glDrawElements ( GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices );
 
 }
 
 
-void Display(void){
-	return;
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+void Display(ESContext *esContext){
 
-	glUseProgram(rectifyShader);
+	UserData *userData = esContext->userData;
+
+	GLfloat *vVertices = malloc(imHeight * imWidth * 2 * sizeof(GLfloat));
+	GLushort *indices = genIndices(imWidth, imHeight);
+
+	glViewport(0, 0, esContext->width, esContext.height);
+
+	glUseProgram(userData -> rectifyProgramObject);
+
 	GLint transformLoc = glGetUniformLocation(rectifyShader, "transformMatrix");
 	GLint projectionLoc = glGetUniformLocation(rectifyShader, "projectionMatrix");
 
@@ -183,60 +259,52 @@ void Display(void){
 	 */
 }
 
+int Init ( ESContext *esContext )
+{
+	esContext->userData = malloc(sizeof(UserData));
+	UserData *userData = esContext->userData;
 
-void GL_initialize(int *argc, char ** argv) {
+	GLbyte vShaderStr[] =
+			"uniform mat4 transformMatrix; \n"
+			"uniform mat4 projectionMatrix;\n"
+			"uniform mat4 cameraMatrix;    \n"
+			"attribute vec2 a_Position;    \n"
+			"attribute vec2 a_texCoord;    \n"
+			"varying vec2 v_texCoord;      \n"
+			"void main()                   \n"
+			"{                             \n"
+			"   gl_Position = vec4(a_Position, 1.0f, 1.0f) * transformMatrix * projectionMatrix; \n"
+			"   v_texCoord = a_texCoord;   \n"
+			"}                             \n";
 
-	bcm_host_init();
+	GLbyte fShaderStr[] =
+			"precision mediump float;                            \n"
+			"varying vec2 v_texCoord;                            \n"
+			"uniform sampler2D s_texture;                        \n"
+			"void main()                                         \n"
+			"{                                                   \n"
+			"  gl_FragColor = texture2D( s_texture, v_texCoord );\n"
+			"}                                                   \n";
+
+	// Load the shaders and get a linked program object
+	userData->rectifyProgramObject = esLoadProgram ( vShaderStr, fShaderStr );
+
+	// Get the attribute locations
+	userData->positionLoc = glGetAttribLocation ( userData->programObject, "a_position" );
+	userData->texCoordLoc = glGetAttribLocation ( userData->programObject, "a_texCoord" );
+
+	// Get the sampler location
+	userData->samplerLoc = glGetUniformLocation ( userData->programObject, "texture" );
+
+	// Load the texture
+	userData->textureId = CreateSimpleTexture2D ();
+
+	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
+	return GL_TRUE;
 
 
-	//Setup our window
-	static EGL_DISPMANX_WINDOW_T nativewindow;
-
-	   DISPMANX_ELEMENT_HANDLE_T dispman_element;
-	   DISPMANX_DISPLAY_HANDLE_T dispman_display;
-	   DISPMANX_UPDATE_HANDLE_T dispman_update;
-	   VC_RECT_T dst_rect;
-	   VC_RECT_T src_rect;
 
 
-
-	   // create an EGL window surface, passing context width/height
-	   success = graphics_get_display_size(0 /* LCD */,
-	                        &display_width, &display_height);
-	   if ( success < 0 )
-	   {
-	      return EGL_FALSE;
-	   }
-
-	   // You can hardcode the resolution here:
-
-
-	   dst_rect.x = 0;
-	   dst_rect.y = 0;
-	   dst_rect.width = imWidth;
-	   dst_rect.height = imHeight;
-
-	   src_rect.x = 0;
-	   src_rect.y = 0;
-	   src_rect.width = imWidth << 16;
-	   src_rect.height = imHeight << 16;
-
-	   dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
-	   dispman_update = vc_dispmanx_update_start( 0 );
-
-	   dispman_element = vc_dispmanx_element_add ( dispman_update,
-	      dispman_display, 0/*layer*/, &dst_rect, 0/*src*/,
-	      &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/,
-	      0/*clamp*/, 0/*transform*/);
-
-	   nativewindow.element = dispman_element;
-	   nativewindow.width = imWidth;
-	   nativewindow.height = imHeight;
-	   vc_dispmanx_update_submit_sync( dispman_update );
-
-	   // Pass the window to the display that have been created
-	   // to the esContext:
-	   esContext->hWnd = &nativewindow;
 #if 0
 	glutInit(argc, argv);
 	glewExperimental = GL_TRUE;
@@ -257,12 +325,12 @@ void GL_initialize(int *argc, char ** argv) {
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-//	glBindTexture(GL_TEXTURE_2D, rightImageRectified);
-//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//	glBindTexture(GL_TEXTURE_2D, rightImageRectified);
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-//	glBindTexture(GL_TEXTURE_2D, 0);
+	//	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//Set up our VAO's
 	init_VAO();
@@ -384,7 +452,7 @@ GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 }
 
 void init_VAO(){
-	
+
 	//initialize the VAO
 	glGenVertexArrays(1,&vao1);
 	cout << "VAO Init done " << endl;
@@ -429,7 +497,7 @@ void init_VAO(){
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
-	
+
 	glGenVertexArrays(1, &vao2);
 	glBindVertexArray(vao2);
 	glGenBuffers(3, handle2);
