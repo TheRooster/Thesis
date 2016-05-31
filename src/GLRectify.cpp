@@ -198,7 +198,7 @@ void Draw ( ESContext *esContext )
 
 
 	glDrawElements ( GL_TRIANGLES, userData->numIndices, GL_UNSIGNED_INT, userData->indices );
-
+	eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
 }
 
 
