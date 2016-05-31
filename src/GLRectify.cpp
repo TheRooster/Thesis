@@ -245,9 +245,9 @@ int Init ( ESContext *esContext )
 	userData->positionLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_Position" );
 	userData->colorLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_Color" );
 
-	glClearColor ( 1.0f, 1.0f, 0.0f, 1.0f );
+	glClearColor ( 0.39f, 0.58f, 0.92f, 1.0f );
 
-	vertices = init_VertexInfo();
+	vertices =//init_VertexInfo();
 	indices = genIndices(imWidth, imHeight);
 	colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
