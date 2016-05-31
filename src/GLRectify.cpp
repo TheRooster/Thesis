@@ -298,12 +298,15 @@ GLfloat * init_VertexInfo(){
 
 	for(int i = 0; i < imHeight; i ++){
 		for(int j = 0; j < imWidth; j++){
-			cout << i << ":" << j << endl;
-			tmpVertexInfo[(i * imWidth) + j] = (GLfloat)j;
-			tmpVertexInfo[(i * imWidth) + j + 1] = (GLfloat)i;
-			tmpVertexInfo[(i * imWidth) + j + 2] = 1.0f;
-			tmpVertexInfo[(i * imWidth) + j + 3] = 1.0f;
+			int loc = i*imWidth + j;
+			tmpVertexInfo[loc] = (GLfloat)j;
+			tmpVertexInfo[loc + 1] = (GLfloat)i;
+			tmpVertexInfo[loc + 2] = 1.0f;
+			tmpVertexInfo[loc + 3] = 1.0f;
+
+			cout << tmpVertexInfo[loc] << ":" << tmpVertexInfo[loc + 1] << ":" << tmpVertexInfo[loc+2] << ":" << tmpVertexInfo[loc+3] << endl;
 		}
+
 	}
 
 	for(int i = 0; i < imWidth * imHeight * 4; i+=4)
