@@ -194,7 +194,7 @@ void Draw ( ESContext *esContext )
 	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
 			GL_TRUE, 1, vertices);
 	// Load the texture coordinate
-	glVertexAttribPointer ( userData->colorLoc, 3, GL_UBYTE,
+	glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
 			GL_TRUE, 1, colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
