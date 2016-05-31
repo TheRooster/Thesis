@@ -73,7 +73,7 @@ typedef struct
 
 void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
-GLfloat * init_VertexInfo()
+GLfloat * init_VertexInfo();
 GLuint CreateSimpleTexture2D( );
 void ShutDown ( ESContext *esContext );
 
