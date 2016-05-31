@@ -201,7 +201,7 @@ void Draw ( ESContext *esContext )
 	glEnableVertexAttribArray ( userData->colorLoc );
 
 
-	glDrawElements ( GL_LINES, indicesCount, GL_UNSIGNED_INT, indices );
+	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, indices );
 
 }
 
@@ -235,7 +235,7 @@ int Init ( ESContext *esContext )
 			"varying vec3 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
-			"    gl_FragColor = vec4(v_Color, 1.0);             \n"
+			"    gl_FragColor = vec4(1.0,1.0,1.0,1.0);             \n"
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
