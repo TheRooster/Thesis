@@ -312,8 +312,8 @@ GLuint * genIndices(int picWidth, int picHeight){
 	}
 	indicesCount = temp.size();
 
-	GLuint * indices = (GLint *)malloc(temp.size() * sizeof(GLint));
-	for(int i = 0; i < temp.size; i ++){
+	GLuint * indices = (GLuint *)malloc(temp.size() * sizeof(GLint));
+	for(int i = 0; i < temp.size(); i ++){
 		indices[i] = temp[i];
 	}
 	return indices;
