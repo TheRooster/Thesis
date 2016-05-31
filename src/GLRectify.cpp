@@ -284,7 +284,7 @@ int Init ( ESContext *esContext )
 	glClearColor ( 1.0f, 1.0f, 1.0f, 1.0f );
 
 	vertices = init_VertexInfo();
-	colors = init_VertexInfo();
+	//colors = init_VertexInfo();
 	return GL_TRUE;
 }
 
@@ -298,6 +298,7 @@ GLfloat * init_VertexInfo(){
 
 	for(int i = 0; i < imHeight; i ++){
 		for(int j = 0; j < imWidth; j++){
+			cout << i << ":" << j << endl;
 			tmpVertexInfo[(i * imWidth) + j] = (GLfloat)j;
 			tmpVertexInfo[(i * imWidth) + j + 1] = (GLfloat)i;
 			tmpVertexInfo[(i * imWidth) + j + 2] = 1.0f;
