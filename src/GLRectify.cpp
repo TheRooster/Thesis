@@ -277,14 +277,11 @@ GLfloat * init_VertexInfo(){
 GLshort * init_VertexColors(char * filename){
 
 	ilBindImage(ImgId);
-	cout << "Loading image" << endl;
 	ilLoadImage(filename);
-	cout << "Image Loaded" << endl;
+
 
 	GLshort * tmp = (GLshort *) ilGetData();
-	for(int i = 0; i < imWidth * imHeight * 4; i ++){
-		cout << tmp[i] << endl;
-	}
+	return tmp;
 }
 
 GLuint * genIndices(int picWidth, int picHeight){
