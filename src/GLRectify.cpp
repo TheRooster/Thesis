@@ -73,6 +73,7 @@ typedef struct
 
 void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
+GLfloat * init_VertexInfo()
 GLuint CreateSimpleTexture2D( );
 void ShutDown ( ESContext *esContext );
 
@@ -232,7 +233,7 @@ void Draw ( ESContext *esContext )
                          GL_FALSE, 5 * sizeof(GLfloat), &vVertices[3] );
 
    glEnableVertexAttribArray ( userData->positionLoc );
-   glEnableVertexAttribArray ( userData->texCoordLoc );
+   glEnableVertexAttribArray ( userData->colorLoc );
 
    // Bind the texture
    glActiveTexture ( GL_TEXTURE0 );
