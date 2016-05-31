@@ -210,6 +210,7 @@ void Draw ( ESContext *esContext )
 int Init ( ESContext *esContext )
 {
 	//init the img data
+	ilInit();
 	ilGenImages(1, &ImgId);
 
 
