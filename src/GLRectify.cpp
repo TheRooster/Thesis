@@ -178,6 +178,7 @@ int main(int argc, char ** argv){
 
 void Draw ( ESContext *esContext )
 {
+	colors = init_VertexColors("res/left01.jpg");
    UserData *userData =(UserData *)(esContext->userData);
 
    // Set the viewport
@@ -246,7 +247,6 @@ int Init ( ESContext *esContext )
 	glClearColor ( 1.0f, 1.0f, 1.0f, 1.0f );
 
 	vertices = init_VertexInfo();
-	colors = init_VertexColors("res/left01.jpg");
 	indices = genIndices(imWidth, imHeight);
 	return GL_TRUE;
 }
@@ -274,24 +274,11 @@ GLfloat * init_VertexInfo(){
 
 
 GLshort * init_VertexColors(char * filename){
-	cout << "Loading Image" << endl;
 
-	GLshort *tmp = (GLshort *)malloc(imWidth * imHeight * 4 * sizeof(GLshort));
-	for(int i = 0; i < imWidth * imHeight * 4; i ++)
-	{
-		if(i % 2 == 0){
-			tmp[i] = 255;
-		}
-		else{
-			tmp[i] = 0;
-		}
-	}
+	ilBindImage(ImgId);
+	ilLoadImage(filename);
 
-	return tmp;
-	//ilBindImage(ImgId);
-	//ilLoadImage(filename);
-
-	//return (GLshort *) ilGetData();
+	return (GLshort *) ilGetData();
 }
 
 GLuint * genIndices(int picWidth, int picHeight){
