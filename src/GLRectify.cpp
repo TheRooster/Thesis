@@ -35,7 +35,7 @@ mat3x4 projection2;
 
 GLfloat *vertices;
 GLubyte * colors;
-//GLuint * indices;
+GLuint * indices;
 int indicesCount = 0;
 
 
@@ -197,10 +197,10 @@ void Draw ( ESContext *esContext )
 			GL_FALSE, 1, colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
-	//glEnableVertexAttribArray ( userData->colorLoc );
+	glEnableVertexAttribArray ( userData->colorLoc );
 
 
-	glDrawElements ( GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices );
+	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, indices );
 
 }
 
