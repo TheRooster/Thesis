@@ -235,7 +235,7 @@ int Init ( ESContext *esContext )
 			"varying vec3 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
-			"    gl_FragColor = vec4(v_Color.x, v_Color.y, v_Color.z, 1.0f);             \n"
+			"    gl_FragColor = vec4(v_Color, 1.0);             \n"
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
@@ -245,7 +245,7 @@ int Init ( ESContext *esContext )
 	userData->positionLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_Position" );
 	userData->colorLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_Color" );
 
-	glClearColor ( 1.0f, 1.0f, 1.0f, 1.0f );
+	glClearColor ( 1.0f, 1.0f, 0.0f, 1.0f );
 
 	vertices = init_VertexInfo();
 	indices = genIndices(imWidth, imHeight);
