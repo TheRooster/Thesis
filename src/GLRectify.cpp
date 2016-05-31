@@ -277,7 +277,8 @@ GLshort * init_VertexColors(char * filename){
 
 	ilBindImage(ImgId);
 	cout << "Loading image" << endl;
-	cout << ilLoadImage(filename) <<endl;
+	ilLoadImage(filename);
+	cout << "Image Loaded" << endl;
 
 	GLshort * tmp = (GLshort *) ilGetData();
 	for(int i = 0; i < imWidth * imHeight * 4; i ++){
