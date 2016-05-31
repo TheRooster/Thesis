@@ -13,9 +13,9 @@ run: install
 calib:
 	g++ -o camera_calib src/stereo_calibrate.cpp  $(cflags) $(openCVlibs)
 
-cvRect:
+cvRect: get
 	g++ -o cv_rectify src/CVRectify.cpp $(cflags) $(openCVlibs)
-glRect:
+glRect: get
 	g++ -o gl_rectify src/GLRectify.cpp src/Common/*.c $(cflags) $(openGLlibs)
 
 install: thesis
