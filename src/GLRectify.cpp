@@ -297,8 +297,8 @@ GLfloat * init_VertexInfo(){
 	//indices = genIndices(imWidth, imHeight);
 
 	for(int i = 0; i < imHeight; i ++){
-		for(int j = 0; j < imWidth; j++){
-			int loc = i*imWidth + j;
+		for(int j = 0; j < imWidth * 4; j++){
+			int loc = (i*imWidth) + j;
 			tmpVertexInfo[loc] = (GLfloat)j;
 			tmpVertexInfo[loc + 1] = (GLfloat)i;
 			tmpVertexInfo[loc + 2] = 1.0f;
