@@ -80,7 +80,7 @@ void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
 GLfloat * init_VertexInfo();
 GLubyte * init_VertexColors(char * filename);
-GLuint * genIndices(int picWidth, int picHeight);
+GLuint * genIndices(int picWidth, int picHeight, int * numIndices);
 GLuint CreateSimpleTexture2D( );
 void ShutDown ( ESContext *esContext );
 
@@ -244,7 +244,7 @@ int Init ( ESContext *esContext )
 	glClearColor ( 0.39f, 0.58f, 0.92f, 1.0f );
 
 	userData -> vertices =init_VertexInfo();
-	userData -> indices =genIndices(imWidth, imHeight);
+	userData -> indices =genIndices(imWidth, imHeight, userData->numIndices);
 	userData -> colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
@@ -286,7 +286,7 @@ GLubyte * init_VertexColors(char * filename){
 	return (GLubyte *)tmp;
 }
 
-GLuint * genIndices(int picWidth, int picHeight){
+GLuint * genIndices(int picWidth, int picHeight, int * numIndices){
 	vector<int> temp;
 
 	for(int i = 0; i < picHeight; i ++){
@@ -304,7 +304,7 @@ GLuint * genIndices(int picWidth, int picHeight){
 		}
 
 	}
-	indicesCount = temp.size();
+	*numIndices = temp.size();
 
 	GLuint * indices = (GLuint *)malloc(temp.size() * sizeof(GLint));
 	for(int i = 0; i < temp.size(); i ++){
@@ -317,8 +317,6 @@ void ShutDown ( ESContext *esContext )
 {
 	UserData *userData =(UserData *)(esContext->userData);
 
-	// Delete texture object
-	glDeleteTextures ( 1, &userData->textureId );
 
 	// Delete program object
 	glDeleteProgram ( userData->rectifyProgramObject );
