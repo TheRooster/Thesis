@@ -34,7 +34,7 @@ mat3x4 projection1;
 mat3x4 projection2;
 
 GLfloat * vertices;
-GLfloat * colors;
+GLshort * colors;
 
 GLuint * indices;
 
@@ -82,6 +82,7 @@ typedef struct
 void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
 GLfloat * init_VertexInfo();
+GLshort * init_VertexColors(char * filename);
 GLuint CreateSimpleTexture2D( );
 void ShutDown ( ESContext *esContext );
 
@@ -191,8 +192,8 @@ void Draw ( ESContext *esContext )
    glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
                            GL_FALSE, 1, vertices);
    // Load the texture coordinate
-   glVertexAttribPointer ( userData->colorLoc, 3, GL_FLOAT,
-                         GL_FALSE, 5 * sizeof(GLfloat), &vVertices[3] );
+   glVertexAttribPointer ( userData->colorLoc, 3, GL_SHORT,
+                         GL_FALSE, 3 * sizeof(GLshort), &colors);
 
    glEnableVertexAttribArray ( userData->positionLoc );
    glEnableVertexAttribArray ( userData->colorLoc );
@@ -250,7 +251,7 @@ int Init ( ESContext *esContext )
 	glClearColor ( 1.0f, 1.0f, 1.0f, 1.0f );
 
 	vertices = init_VertexInfo();
-	colors = init_VertexColors();
+	colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
 
@@ -276,7 +277,7 @@ GLfloat * init_VertexInfo(){
 }
 
 
-GLshort * initVertexColors(char * filename){
+GLshort * init_VertexColors(char * filename){
 	ilBindImage(ImgId);
 	ilLoadImage(filename);
 

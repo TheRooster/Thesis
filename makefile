@@ -1,7 +1,7 @@
 
 cflags =-I/opt/vc/include -I/usr/local/include/opencv -I/usr/local/include/opencv2 -L/usr/local/lib/ -L/opt/vc/lib -std=c++11 -DRPI_NO_X 
 openCVlibs = -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_stitching -lopencv_ximgproc
-openGLlibs = -lGLESv2 -lEGL -lm -lbcm_host
+openGLlibs = -lGLESv2 -lEGL -lm -lbcm_host -lIL -lILU
 
 
 all:
