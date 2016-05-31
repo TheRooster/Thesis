@@ -280,14 +280,10 @@ GLubyte * init_VertexColors(char * filename){
 	ilBindImage(ImgId);
 	ilLoadImage(filename);
 	ILubyte * tmp = ilGetData();
-	ILuint Width, Height;
-	Width = ilGetInteger(IL_IMAGE_WIDTH);
-	Height = ilGetInteger(IL_IMAGE_HEIGHT);
-	cout << (int)Width << ':' << (int)Height << endl;
-	/*
-	for(int i = 0; 1228800; i +=4){
-		cout << '[' << (int)tmp[i] << ' ' << (int)tmp[i+1] << ' ' << (int)tmp[i+2] << ' ' << (int)tmp[i+3] << ']' << endl;
-	}*/
+
+	for(int i = 0; 921600; i +=3){
+		cout << '[' << (int)tmp[i] << ' ' << (int)tmp[i+1] << ' ' << (int)tmp[i+2] << ']' << endl;
+	}
 	cout << "image Loaded" << endl;
 	return (GLubyte *)tmp;
 }
