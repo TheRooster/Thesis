@@ -35,8 +35,8 @@ mat3x4 projection2;
 
 GLfloat * vertices;
 GLshort * colors;
-
 GLuint * indices;
+int indicesCount = 0;
 
 
 //IL stuff
@@ -192,20 +192,14 @@ void Draw ( ESContext *esContext )
    glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
                            GL_FALSE, 1, vertices);
    // Load the texture coordinate
-   glVertexAttribPointer ( userData->colorLoc, 3, GL_SHORT,
-                         GL_FALSE, 3 * sizeof(GLshort), &colors);
+   glVertexAttribPointer ( userData->colorLoc, 4, GL_SHORT,
+                         GL_FALSE, 1, colors);
 
    glEnableVertexAttribArray ( userData->positionLoc );
    glEnableVertexAttribArray ( userData->colorLoc );
 
-   // Bind the texture
-   glActiveTexture ( GL_TEXTURE0 );
-   glBindTexture ( GL_TEXTURE_2D, userData->textureId );
 
-   // Set the sampler texture unit to 0
-   glUniform1i ( userData->samplerLoc, 0 );
-
-   glDrawElements ( GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices );
+   glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_SHORT, indices );
 
 }
 
@@ -225,8 +219,8 @@ int Init ( ESContext *esContext )
 			"uniform mat4 projectionMatrix;\n"
 			"uniform mat4 cameraMatrix;    \n"
 			"attribute vec4 a_Position;    \n"
-			"attribute vec3 a_Color;    \n"
-			"varying vec3 v_Color;      \n"
+			"attribute vec4 a_Color;    \n"
+			"varying vec4 v_Color;      \n"
 			"void main()                   \n"
 			"{                             \n"
 			"   gl_Position = a_Position;  \n"
@@ -235,7 +229,7 @@ int Init ( ESContext *esContext )
 
 	GLbyte fShaderStr[] =
 			"precision mediump float;                            \n"
-			"varying vec3 v_Color;                               \n"
+			"varying vec4 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
 			"  gl_FragColor = v_Color;                           \n"
@@ -278,13 +272,14 @@ GLfloat * init_VertexInfo(){
 
 
 GLshort * init_VertexColors(char * filename){
+	cout << "Loading Image" << endl;
 	ilBindImage(ImgId);
 	ilLoadImage(filename);
 
 	return (GLshort *) ilGetData();
 }
 
-vector<int> genIndices(int picWidth, int picHeight){
+GLuint * genIndices(int picWidth, int picHeight){
 	vector<int> temp;
 
 	for(int i = 0; i < picHeight; i ++){
@@ -302,7 +297,13 @@ vector<int> genIndices(int picWidth, int picHeight){
 		}
 
 	}
-	return temp;
+	indicesCount = temp.size();
+
+	GLuint * indices = (GLint *)malloc(temp.size() * sizeof(GLint));
+	for(int i = 0; i < temp.size; i ++){
+		indices[i] = temp[i];
+	}
+	return indices;
 }
 
 void ShutDown ( ESContext *esContext )
