@@ -33,10 +33,7 @@ mat3 rotation2;
 mat3x4 projection1;
 mat3x4 projection2;
 
-GLfloat *vertices;
-GLubyte * colors;
-GLuint * indices;
-int indicesCount = 0;
+
 
 
 //IL stuff
@@ -53,11 +50,11 @@ typedef struct
 	GLint  positionLoc;
 	GLint  colorLoc;
 
-	// Sampler location
-	GLint samplerLoc;
-
-	// Texture handle
-	GLuint textureId;
+	//vertex data
+	GLfloat *vertices;
+	GLubyte * colors;
+	GLuint * indices;
+	int numIndices;
 
 } UserData;
 
@@ -191,16 +188,16 @@ void Draw ( ESContext *esContext )
 
 	// Load the vertex position
 	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
-			GL_TRUE, 1, vertices);
+			GL_FALSE, 1, userData -> vertices);
 	// Load the texture coordinate
 	glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
-			GL_FALSE, 1, colors);
+			GL_FALSE, 1, userData -> colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
 	glEnableVertexAttribArray ( userData->colorLoc );
 
 
-	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, indices );
+	glDrawElements ( GL_TRIANGLES, userData->numIndices, GL_UNSIGNED_INT, userData->indices );
 
 }
 
@@ -246,9 +243,9 @@ int Init ( ESContext *esContext )
 
 	glClearColor ( 0.39f, 0.58f, 0.92f, 1.0f );
 
-	vertices =init_VertexInfo();
-	indices =genIndices(imWidth, imHeight);
-	colors = init_VertexColors("res/left01.jpg");
+	userData -> vertices =init_VertexInfo();
+	userData -> indices =genIndices(imWidth, imHeight);
+	userData -> colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
 
