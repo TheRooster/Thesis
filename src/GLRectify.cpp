@@ -246,6 +246,7 @@ int Init ( ESContext *esContext )
 
 	vertices = init_VertexInfo();
 	colors = init_VertexColors("res/left01.jpg");
+	indices = genIndices(imWidth, imHeight);
 	return GL_TRUE;
 }
 
