@@ -39,7 +39,7 @@ typedef struct
 
 	// Attribute locations
 	GLint  positionLoc;
-	GLint  texCoordLoc;
+	GLint  colorLoc;
 
 	// Sampler location
 	GLint samplerLoc;
@@ -65,6 +65,8 @@ typedef struct
 //GLuint LoadShaders(const char * vertex_file, const char * fragment_file);
 //void init_VAO();
 //vector<int> genIndices(int picWidth, int picHeight);
+
+
 void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
 GLuint CreateSimpleTexture2D( );
@@ -320,25 +322,24 @@ int Init ( ESContext *esContext )
 			"uniform mat4 projectionMatrix;\n"
 			"uniform mat4 cameraMatrix;    \n"
 			"attribute vec4 a_Position;    \n"
-			"attribute vec2 a_texCoord;    \n"
-			"varying vec2 v_texCoord;      \n"
+			"attribute vec3 a_Color;    \n"
+			"varying vec2 v_Color;      \n"
 			"void main()                   \n"
 			"{                             \n"
 			"   gl_Position = a_Position;  \n"
-			"   v_texCoord = a_texCoord;   \n"
+			"   v_Color = a_Color;   \n"
 			"}                             \n";
 
 	GLbyte fShaderStr[] =
 			"precision mediump float;                            \n"
-			"varying vec2 v_texCoord;                            \n"
-			"uniform sampler2D s_texture;                        \n"
+			"varying vec2 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
-			"  gl_FragColor = texture2D( s_texture, v_texCoord );\n"
+			"  gl_FragColor = v_Color;                           \n"
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
-	userData->rectifyProgramObject = esLoadProgram ((char *)vShaderStr,(char *)fShaderStr );
+	userData->rectifyProgramObject = esLoadProgram ((char *)vShaderStr, (char *)fShaderStr );
 
 	// Get the attribute locations
 	userData->positionLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_position" );
@@ -351,191 +352,39 @@ int Init ( ESContext *esContext )
 	userData->textureId = CreateSimpleTexture2D ();
 
 	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
+
+	init_VertexInfo();
 	return GL_TRUE;
-
-
-
-
-
-#if 0
-	glutInit(argc, argv);
-	glewExperimental = GL_TRUE;
-	glewInit();
-	//set up opengl window to render into
-	glutInitWindowSize(imWidth, imHeight);
-	glutCreateWindow("DepthMap");
-	//glutFullScreen();
-	//Gen the framebuffers
-	//glGenFramebuffers(2, &framebuffers);
-
-	//Gen and setup the Textures that we'll be rendering into
-	//glGenTextures(1, &leftImage);
-	//glGenTextures(1, &rightImage);
-
-	//glBindTexture(GL_TEXTURE_2D, leftImageRectified);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//	glBindTexture(GL_TEXTURE_2D, rightImageRectified);
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//Set up our VAO's
-	init_VAO();
-#endif
-
-	//Compile our shaders
-	//rectifyShader = LoadShaders("res/rectify.vs", "res/rectify.fs");
-	//disparityShader = LoadShaders("res/disparity.vs", "res/disparity.fs");
 }
 
-#if 0
-GLuint LoadShaders(const char * vertex_file, const char * fragment_file) {
 
-	// Create the shaders
-	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+GLfloat * init_VertexInfo(){
 
-	// Read the Vertex Shader code from the file
-	std::string VertexShaderCode;
-	std::ifstream VertexShaderStream(vertex_file, std::ios::in);
-	if (VertexShaderStream.is_open()) {
-		std::string Line = "";
-		while (getline(VertexShaderStream, Line))
-			VertexShaderCode += "\n" + Line;
-		VertexShaderStream.close();
-	}
-	else {
-
-		cerr << "Can not open " << vertex_file << ". No such file exists!" << endl;
-		return 0;
-	}
-
-	// Read the Fragment Shader code from the file
-	std::string FragmentShaderCode;
-	std::ifstream FragmentShaderStream(fragment_file, std::ios::in);
-	if (FragmentShaderStream.is_open()) {
-		std::string Line = "";
-		while (getline(FragmentShaderStream, Line))
-			FragmentShaderCode += "\n" + Line;
-		FragmentShaderStream.close();
-	}
-	else {
-
-		cerr << "Can not open " << fragment_file << ". No such file exists!" << endl;
-		return 0;
-	}
-
-	GLint Result = GL_FALSE;
-	int InfoLogLength;
+	GLfloat * tmpVertexInfo = (GLfloat *)malloc(imWidth * imHeight * 4 * sizeof(GLfloat));//init memory for positions
+	GLfloat * tmpVertexColor = (GLfloat *)malloc(imWidth * imHeight * 3 * sizeof(GLfloat)); //init memory for colors
 
 
-	// Compile Vertex Shader
-	cout << "Compiling shader : " << vertex_file << endl;
-	char const * VertexSourcePointer = VertexShaderCode.c_str();
-	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
-	glCompileShader(VertexShaderID);
-
-	// Check Vertex Shader
-	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-
-		GLchar* log = new GLchar[InfoLogLength + 1];
-
-		glGetShaderInfoLog(VertexShaderID, InfoLogLength, &InfoLogLength, log);
-
-		std::cerr << log << std::endl;
-		delete[] log;
-	}
-
-
-
-	// Compile Fragment Shader
-
-	cout << "Compiling shader : " << fragment_file << endl;
-	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
-	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
-	glCompileShader(FragmentShaderID);
-
-
-
-	// Check Fragment Shader
-	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		GLchar* log = new GLchar[InfoLogLength + 1];
-		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, log);
-		std::cerr << log << std::endl;
-		delete[] log;
-	}
-
-
-
-	// Link the program
-	cout << "Linking program" << endl;
-	GLuint ProgramID = glCreateProgram();
-	glAttachShader(ProgramID, VertexShaderID);
-	glAttachShader(ProgramID, FragmentShaderID);
-	glLinkProgram(ProgramID);
-
-	// Check the program
-	glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
-	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		GLchar* log = new GLchar[InfoLogLength + 1];
-		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, log);
-		std::cerr << log << std::endl;
-		delete[] log;
-	}
-
-
-	glDetachShader(ProgramID, VertexShaderID);
-	glDetachShader(ProgramID, FragmentShaderID);
-
-	glDeleteShader(VertexShaderID);
-	glDeleteShader(FragmentShaderID);
-
-	return ProgramID;
-}
-
-void init_VAO(){
-
-	//initialize the VAO
-	glGenVertexArrays(1,&vao1);
-	cout << "VAO Init done " << endl;
-	glBindVertexArray(vao1);
-	GLuint handle[3];
-	GLuint handle2[3];
-	glGenBuffers(3, handle);
-
-	std::vector<GLuint> tempVertices;
-	std::vector<GLfloat> tempUVs;
-	indices = genIndices(imWidth, imHeight);
-
-	cout << "indices: ";
-
-	for(int i: indices)
-	{
-		cout << i << ' ';
-	}
-	cout << endl;
+	//indices = genIndices(imWidth, imHeight);
 
 	for(int i = 0; i < imHeight; i ++){
 		for(int j = 0; j < imWidth; j++){
-			tempVertices.push_back(j);
-			tempVertices.push_back(i);
-
-			tempUVs.push_back(((GLfloat)imWidth)/j);
-			tempUVs.push_back(((GLfloat)imHeight)/i);
+			tmpVertexInfo[(i * imWidth) + j] = (GLfloat)j;
+			tmpVertexInfo[(i * imWidth) + j + 1] = (GLfloat)i;
+			tmpVertexInfo[(i * imWidth) + j + 2] = 1.0f;
+			tmpVertexInfo[(i * imWidth) + j + 3] = 1.0f;
 		}
 	}
 
+	for(int i = 0; i < imWidth * imHeight * 4; i+=4)
+	{
+		cout << '[' << tmpVertexInfo[i]<< ' ';
+		cout << tmpVertexInfo[i+1] << ' ';
+		cout << tmpVertexInfo[i+2] << ' ';
+		cout << tmpVertexInfo[i+3] << ']' << endl;
 
+
+	}
+/*
 	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
 	glBufferData(GL_ARRAY_BUFFER, tempVertices.size() * sizeof(GLfloat), &tempVertices[0], GL_STATIC_DRAW);
 	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -580,6 +429,7 @@ void init_VAO(){
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(GLuint), &indices2[0], GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
+*/
 }
 
 
@@ -603,8 +453,6 @@ vector<int> genIndices(int picWidth, int picHeight){
 	}
 	return temp;
 }
-
-#endif
 
 void ShutDown ( ESContext *esContext )
 {
