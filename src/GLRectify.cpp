@@ -254,7 +254,7 @@ int Init ( ESContext *esContext )
 	glClearColor ( 0.39f, 0.58f, 0.92f, 1.0f );
 
 	vertices =init_VertexInfo();
-	indices =genIndices(imWidth, imHeight);
+	//indices =genIndices(imWidth, imHeight);
 	colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
