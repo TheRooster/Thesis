@@ -222,8 +222,8 @@ int Init ( ESContext *esContext )
 			"uniform mat4 projectionMatrix;\n"
 			"uniform mat4 cameraMatrix;    \n"
 			"attribute vec4 a_Position;    \n"
-			"attribute vec4 a_Color;    \n"
-			"varying vec4 v_Color;      \n"
+			"attribute vec3 a_Color;    \n"
+			"varying vec3 v_Color;      \n"
 			"void main()                   \n"
 			"{                             \n"
 			"   gl_Position = a_Position;  \n"
@@ -232,10 +232,10 @@ int Init ( ESContext *esContext )
 
 	GLbyte fShaderStr[] =
 			"precision mediump float;                            \n"
-			"varying vec4 v_Color;                               \n"
+			"varying vec3 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
-			"    gl_FragColor = v_Color;                         \n"
+			"    gl_FragColor = vec4(v_Color, 1.0f);             \n"
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
@@ -281,9 +281,9 @@ GLubyte * init_VertexColors(char * filename){
 	ilLoadImage(filename);
 	ILubyte * tmp = ilGetData();
 
-	for(int i = 0; 921600; i +=3){
+	/*for(int i = 0; 640 * 480 * 3; i +=3){
 		cout << '[' << (int)tmp[i] << ' ' << (int)tmp[i+1] << ' ' << (int)tmp[i+2] << ']' << endl;
-	}
+	}*/
 	cout << "image Loaded" << endl;
 	return (GLubyte *)tmp;
 }
