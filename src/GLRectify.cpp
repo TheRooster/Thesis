@@ -307,12 +307,12 @@ GLfloat * init_VertexInfo(){
 
 	}
 
-	for(int i = 0; i < imWidth * imHeight * 4; i+=4)
+	for(int i = 0; i < imWidth * imHeight * 4; i++)
 	{
-		cout << '[' << tmpVertexInfo[i]<< ' ';
-		cout << tmpVertexInfo[i+1] << ' ';
-		cout << tmpVertexInfo[i+2] << ' ';
-		cout << tmpVertexInfo[i+3] << ']' << endl;
+		if(i %4 == 0)
+			cout << ']' << endl << '[' << tmpVertexInfo[i]<< ' ';
+		else
+			cout << tmpVertexInfo[i] << ' ';
 	}
 
 	return tmpVertexInfo;
