@@ -179,29 +179,29 @@ int main(int argc, char ** argv){
 void Draw ( ESContext *esContext )
 {
 	colors = init_VertexColors("res/left01.jpg");
-   UserData *userData =(UserData *)(esContext->userData);
+	UserData *userData =(UserData *)(esContext->userData);
 
-   // Set the viewport
-   glViewport ( 0, 0, esContext->width, esContext->height );
+	// Set the viewport
+	glViewport ( 0, 0, esContext->width, esContext->height );
 
-   // Clear the color buffer
-   glClear ( GL_COLOR_BUFFER_BIT );
+	// Clear the color buffer
+	glClear ( GL_COLOR_BUFFER_BIT );
 
-   // Use the program object
-   glUseProgram ( userData->rectifyProgramObject );
+	// Use the program object
+	glUseProgram ( userData->rectifyProgramObject );
 
-   // Load the vertex position
-   glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
-                           GL_TRUE, 1, vertices);
-   // Load the texture coordinate
-   glVertexAttribPointer ( userData->colorLoc, 4, GL_SHORT,
-                         GL_FALSE, 1, colors);
+	// Load the vertex position
+	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
+			GL_TRUE, 1, vertices);
+	// Load the texture coordinate
+	glVertexAttribPointer ( userData->colorLoc, 4, GL_SHORT,
+			GL_FALSE, 1, colors);
 
-   glEnableVertexAttribArray ( userData->positionLoc );
-   glEnableVertexAttribArray ( userData->colorLoc );
+	glEnableVertexAttribArray ( userData->positionLoc );
+	glEnableVertexAttribArray ( userData->colorLoc );
 
 
-   glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_SHORT, indices );
+	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_SHORT, indices );
 
 }
 
@@ -278,9 +278,10 @@ GLshort * init_VertexColors(char * filename){
 
 	ilBindImage(ImgId);
 	ilLoadImage(filename);
-
-
 	GLshort * tmp = (GLshort *) ilGetData();
+	for(int i = 0; 1228800; i +=4){
+		cout << '[' << tmp[i] << ' ' << tmp[i+1] << ' ' << tmp[i+2] << ' ' << tmp[i+3] << ']' << endl;
+	}
 	return tmp;
 }
 
@@ -313,13 +314,13 @@ GLuint * genIndices(int picWidth, int picHeight){
 
 void ShutDown ( ESContext *esContext )
 {
-   UserData *userData =(UserData *)(esContext->userData);
+	UserData *userData =(UserData *)(esContext->userData);
 
-   // Delete texture object
-   glDeleteTextures ( 1, &userData->textureId );
+	// Delete texture object
+	glDeleteTextures ( 1, &userData->textureId );
 
-   // Delete program object
-   glDeleteProgram ( userData->rectifyProgramObject );
+	// Delete program object
+	glDeleteProgram ( userData->rectifyProgramObject );
 
-   free(esContext->userData);
+	free(esContext->userData);
 }
