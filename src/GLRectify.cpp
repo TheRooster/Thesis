@@ -264,7 +264,6 @@ GLfloat * init_VertexInfo(){
 			tmpVertexInfo[loc + 1] = ((GLfloat)i )/ imHeight;
 			tmpVertexInfo[loc + 2] = 1.0f;
 			tmpVertexInfo[loc + 3] = 1.0f;
-			cout << '[' << tmpVertexInfo[loc] << ' '<< tmpVertexInfo[loc + 1] << ' ' << tmpVertexInfo[loc + 2] << ' ' << tmpVertexInfo[loc + 3] << ']'<< endl;
 		}
 
 	}
