@@ -201,7 +201,7 @@ void Draw ( ESContext *esContext )
 	glEnableVertexAttribArray ( userData->colorLoc );
 
 
-	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, indices );
+	glDrawElements ( GL_LINES, indicesCount, GL_UNSIGNED_INT, indices );
 
 }
 
