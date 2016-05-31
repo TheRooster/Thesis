@@ -2,6 +2,10 @@
 #include <fstream>
 #include <vector>
 
+#include <IL/il.h>
+#include <IL/ilu.h>
+#include <IL/ilut.h>
+
 #include "Common/esUtil.h"
 #include "glm/glm.hpp"
 
@@ -33,6 +37,10 @@ GLfloat * vertices;
 GLfloat * colors;
 
 GLuint * indices;
+
+
+//IL stuff
+ILuint ImgId;
 
 typedef struct
 {
@@ -166,55 +174,9 @@ int main(int argc, char ** argv){
 	ShutDown ( &esContext );
 }
 
-GLuint CreateSimpleTexture2D( )
-{
-   // Texture object handle
-   GLuint textureId;
-
-   // 2x2 Image, 3 bytes per pixel (R, G, B)
-   GLubyte pixels[4 * 3] =
-   {
-      255,   0,   0, // Red
-        0, 255,   0, // Green
-        0,   0, 255, // Blue
-      255, 255,   0  // Yellow
-   };
-
-   // Use tightly packed data
-   glPixelStorei ( GL_UNPACK_ALIGNMENT, 1 );
-
-   // Generate a texture object
-   glGenTextures ( 1, &textureId );
-
-   // Bind the texture object
-   glBindTexture ( GL_TEXTURE_2D, textureId );
-
-   // Load the texture
-   glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels );
-
-   // Set the filtering mode
-   glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-   glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-
-   return textureId;
-
-}
-
-
-
 void Draw ( ESContext *esContext )
 {
    UserData *userData =(UserData *)(esContext->userData);
-   GLfloat vVertices[] = { -0.5f,  0.5f, 0.0f,  // Position 0
-                            0.0f,  0.0f,        // TexCoord 0
-                           -0.5f, -0.5f, 0.0f,  // Position 1
-                            0.0f,  1.0f,        // TexCoord 1
-                            0.5f, -0.5f, 0.0f,  // Position 2
-                            1.0f,  1.0f,        // TexCoord 2
-                            0.5f,  0.5f, 0.0f,  // Position 3
-                            1.0f,  0.0f         // TexCoord 3
-                         };
-   GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
 
    // Set the viewport
    glViewport ( 0, 0, esContext->width, esContext->height );
@@ -250,6 +212,10 @@ void Draw ( ESContext *esContext )
 
 int Init ( ESContext *esContext )
 {
+	//init the img data
+	ilGenImages(1, &ImgId);
+
+
 	esContext->userData = malloc(sizeof(UserData));
 	UserData *userData = (UserData *)(esContext->userData);
 
@@ -284,7 +250,7 @@ int Init ( ESContext *esContext )
 	glClearColor ( 1.0f, 1.0f, 1.0f, 1.0f );
 
 	vertices = init_VertexInfo();
-	//colors = init_VertexInfo();
+	colors = init_VertexColors();
 	return GL_TRUE;
 }
 
@@ -306,22 +272,15 @@ GLfloat * init_VertexInfo(){
 		}
 
 	}
-
-	for(int i = 0; i < imWidth * imHeight * 4; i++)
-	{
-		if(i %4 == 0)
-			cout << ']' << endl << '[' << tmpVertexInfo[i]<< ' ';
-		else
-			cout << tmpVertexInfo[i] << ' ';
-	}
-
 	return tmpVertexInfo;
 }
 
 
-GLfloat * initVertexColors(){
-	GLfloat * tmpVertexColor = (GLfloat *)malloc(imWidth * imHeight * 3 * sizeof(GLfloat)); //init memory for colors
-	return tmpVertexColor;
+GLshort * initVertexColors(char * filename){
+	ilBindImage(ImgId);
+	ilLoadImage(filename);
+
+	return (GLshort *) ilGetData();
 }
 
 vector<int> genIndices(int picWidth, int picHeight){
