@@ -82,7 +82,7 @@ typedef struct
 void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
 GLfloat * init_VertexInfo();
-GLshort * init_VertexColors(char * filename);
+GLubyte * init_VertexColors(char * filename);
 GLuint * genIndices(int picWidth, int picHeight);
 GLuint CreateSimpleTexture2D( );
 void ShutDown ( ESContext *esContext );
@@ -194,14 +194,14 @@ void Draw ( ESContext *esContext )
 	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
 			GL_TRUE, 1, vertices);
 	// Load the texture coordinate
-	glVertexAttribPointer ( userData->colorLoc, 4, GL_SHORT,
-			GL_FALSE, 1, colors);
+	glVertexAttribPointer ( userData->colorLoc, 4, GL_BYTE,
+			GL_TRUE, 1, colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
 	glEnableVertexAttribArray ( userData->colorLoc );
 
 
-	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_SHORT, indices );
+	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, indices );
 
 }
 
