@@ -178,7 +178,7 @@ int main(int argc, char ** argv){
 
 void Draw ( ESContext *esContext )
 {
-	colors = init_VertexColors("res/left01.jpg");
+
 	UserData *userData =(UserData *)(esContext->userData);
 
 	// Set the viewport
@@ -249,6 +249,7 @@ int Init ( ESContext *esContext )
 
 	vertices = init_VertexInfo();
 	indices = genIndices(imWidth, imHeight);
+	colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
 
@@ -280,7 +281,7 @@ GLubyte * init_VertexColors(char * filename){
 	ilLoadImage(filename);
 	ILubyte * tmp = ilGetData();
 	for(int i = 0; 1228800; i +=4){
-		cout << '[' << tmp[i] << ' ' << tmp[i+1] << ' ' << tmp[i+2] << ' ' << tmp[i+3] << ']' << endl;
+		cout << '[' << (int)tmp[i] << ' ' << (int)tmp[i+1] << ' ' << (int)tmp[i+2] << ' ' << (int)tmp[i+3] << ']' << endl;
 	}
 	return (GLubyte *)tmp;
 }
