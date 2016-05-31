@@ -192,10 +192,10 @@ void Draw ( ESContext *esContext )
 
 	// Load the vertex position
 	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
-			GL_TRUE, 1, vertices);
+			GL_FALSE, 1, vertices);
 	// Load the texture coordinate
 	glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
-			GL_TRUE, 1, colors);
+			GL_FALSE, 1, colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
 	glEnableVertexAttribArray ( userData->colorLoc );
@@ -235,7 +235,7 @@ int Init ( ESContext *esContext )
 			"varying vec3 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
-			"    gl_FragColor = vec4(1.0,1.0,1.0,1.0);             \n"
+			"    gl_FragColor = vec4(1.0,1.0,1.0,1.0);           \n"
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
