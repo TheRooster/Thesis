@@ -192,13 +192,13 @@ void Draw ( ESContext *esContext )
 
 	// Load the vertex position
 	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
-			GL_FALSE, 1, vertices);
+			GL_TRUE, 1, vertices);
 	// Load the texture coordinate
-	glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
-			GL_FALSE, 1, colors);
+	//glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
+	//		GL_FALSE, 1, colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
-	glEnableVertexAttribArray ( userData->colorLoc );
+	//glEnableVertexAttribArray ( userData->colorLoc );
 
 
 	glDrawElements ( GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, indices );
@@ -247,9 +247,13 @@ int Init ( ESContext *esContext )
 
 	glClearColor ( 0.39f, 0.58f, 0.92f, 1.0f );
 
-	vertices =init_VertexInfo();
-	indices = genIndices(imWidth, imHeight);
-	colors = init_VertexColors("res/left01.jpg");
+	vertices ={ -0.5f,  0.5f, 0.0f,  // Position 0
+				-0.5f, -0.5f, 0.0f,  // Position 1
+				0.5f, -0.5f, 0.0f,  // Position 2
+				0.5f,  0.5f, 0.0f,  // Position 3
+         	 };//init_VertexInfo();
+	indices = { 0, 1, 2, 0, 2, 3 };//genIndices(imWidth, imHeight);
+	//colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
 
