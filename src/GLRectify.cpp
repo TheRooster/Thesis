@@ -283,6 +283,7 @@ GLubyte * init_VertexColors(char * filename){
 	for(int i = 0; 1228800; i +=4){
 		cout << '[' << (int)tmp[i] << ' ' << (int)tmp[i+1] << ' ' << (int)tmp[i+2] << ' ' << (int)tmp[i+3] << ']' << endl;
 	}
+	cout << "image Loaded" << endl;
 	return (GLubyte *)tmp;
 }
 
