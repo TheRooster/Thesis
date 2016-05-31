@@ -83,6 +83,7 @@ void Draw ( ESContext *esContext );
 int Init ( ESContext *esContext );
 GLfloat * init_VertexInfo();
 GLshort * init_VertexColors(char * filename);
+GLuint * genIndices(int picWidth, int picHeight);
 GLuint CreateSimpleTexture2D( );
 void ShutDown ( ESContext *esContext );
 
