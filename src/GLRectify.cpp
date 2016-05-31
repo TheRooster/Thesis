@@ -29,6 +29,10 @@ mat3 rotation2;
 mat3x4 projection1;
 mat3x4 projection2;
 
+GLfloat * vertices;
+GLfloat * colors;
+
+GLuint * indices;
 
 typedef struct
 {
@@ -221,11 +225,11 @@ void Draw ( ESContext *esContext )
    glUseProgram ( userData->rectifyProgramObject );
 
    // Load the vertex position
-   glVertexAttribPointer ( userData->positionLoc, 3, GL_FLOAT,
-                           GL_FALSE, 5 * sizeof(GLfloat), vVertices );
+   glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
+                           GL_FALSE, 1, vertices);
    // Load the texture coordinate
-   glVertexAttribPointer ( userData->texCoordLoc, 2, GL_FLOAT,
-                           GL_FALSE, 5 * sizeof(GLfloat), &vVertices[3] );
+   glVertexAttribPointer ( userData->colorLoc, 3, GL_FLOAT,
+                         GL_FALSE, 5 * sizeof(GLfloat), &vVertices[3] );
 
    glEnableVertexAttribArray ( userData->positionLoc );
    glEnableVertexAttribArray ( userData->texCoordLoc );
@@ -241,76 +245,7 @@ void Draw ( ESContext *esContext )
 
 }
 
-#if 0
-void Display(void){
-	return;
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-
-	UserData *userData =(UserData *)(esContext->userData);
-
-	GLfloat *vVertices = malloc(imHeight * imWidth * 2 * sizeof(GLfloat));
-	GLushort *indices = genIndices(imWidth, imHeight);
-
-	glViewport(0, 0, esContext->width, esContext.height);
-
-	glUseProgram(userData -> rectifyProgramObject);
-
-	GLint transformLoc = glGetUniformLocation(rectifyShader, "transformMatrix");
-	GLint projectionLoc = glGetUniformLocation(rectifyShader, "projectionMatrix");
-
-	//Left Image
-	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[0]);
-	// Clear all attached buffers
-	glViewport(0, 0, imWidth, imHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//set the matrices
-	glUniformMatrix4fv(transformLoc, 1,GL_FALSE, (GLfloat *)&rotation1[0]);
-	glUniformMatrix4fv(projectionLoc, 1,GL_FALSE, (GLfloat *)&projection1[0]);
-
-	//render left image here
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
-	/*
-	//Right Image
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[1]);
-	glViewport(0, 0, imSize.width, imSize.height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//set the matrices
-	glUniformMatrix4fv(transformLoc, 1, rotationMatrices[1]);
-	glUniformMatrix4fv(projectionLoc, 1, projectionMatrices[1]);
-
-	//render right image here
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
-
-
-
-	/////////////////////////////////////////////////////
-	// Bind to default framebuffer again draw the depth map
-	// //////////////////////////////////////////////////
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// Clear all relevant buffers
-	glViewport(0, 0, imSize.width, imSize.height);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Draw Screen
-	glUseProgram(disparityShader);
-
-
-
-
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, rightImage);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, rightImage);
-
-	 */
-
-}
-#endif
 
 int Init ( ESContext *esContext )
 {
@@ -323,7 +258,7 @@ int Init ( ESContext *esContext )
 			"uniform mat4 cameraMatrix;    \n"
 			"attribute vec4 a_Position;    \n"
 			"attribute vec3 a_Color;    \n"
-			"varying vec2 v_Color;      \n"
+			"varying vec3 v_Color;      \n"
 			"void main()                   \n"
 			"{                             \n"
 			"   gl_Position = a_Position;  \n"
@@ -332,7 +267,7 @@ int Init ( ESContext *esContext )
 
 	GLbyte fShaderStr[] =
 			"precision mediump float;                            \n"
-			"varying vec2 v_Color;                               \n"
+			"varying vec3 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
 			"  gl_FragColor = v_Color;                           \n"
@@ -342,18 +277,13 @@ int Init ( ESContext *esContext )
 	userData->rectifyProgramObject = esLoadProgram ((char *)vShaderStr, (char *)fShaderStr );
 
 	// Get the attribute locations
-	userData->positionLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_position" );
-	userData->texCoordLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_texCoord" );
+	userData->positionLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_Position" );
+	userData->colorLoc = glGetAttribLocation ( userData->rectifyProgramObject, "a_Color" );
 
-	// Get the sampler location
-	userData->samplerLoc = glGetUniformLocation ( userData->rectifyProgramObject, "texture" );
+	glClearColor ( 1.0f, 1.0f, 1.0f, 1.0f );
 
-	// Load the texture
-	userData->textureId = CreateSimpleTexture2D ();
-
-	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
-
-	init_VertexInfo();
+	vertices = init_VertexInfo();
+	colors = init_VertexInfo();
 	return GL_TRUE;
 }
 
@@ -361,7 +291,6 @@ int Init ( ESContext *esContext )
 GLfloat * init_VertexInfo(){
 
 	GLfloat * tmpVertexInfo = (GLfloat *)malloc(imWidth * imHeight * 4 * sizeof(GLfloat));//init memory for positions
-	GLfloat * tmpVertexColor = (GLfloat *)malloc(imWidth * imHeight * 3 * sizeof(GLfloat)); //init memory for colors
 
 
 	//indices = genIndices(imWidth, imHeight);
@@ -381,57 +310,16 @@ GLfloat * init_VertexInfo(){
 		cout << tmpVertexInfo[i+1] << ' ';
 		cout << tmpVertexInfo[i+2] << ' ';
 		cout << tmpVertexInfo[i+3] << ']' << endl;
-
-
 	}
-/*
-	glBindBuffer(GL_ARRAY_BUFFER, handle[0]);
-	glBufferData(GL_ARRAY_BUFFER, tempVertices.size() * sizeof(GLfloat), &tempVertices[0], GL_STATIC_DRAW);
-	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);  // Vertex position
 
-
-	glBindBuffer(GL_ARRAY_BUFFER, handle[1]);
-	glBufferData(GL_ARRAY_BUFFER, tempUVs.size() * sizeof(GLfloat), &tempUVs[0], GL_STATIC_DRAW);
-	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);  // UV position
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &vao2);
-	glBindVertexArray(vao2);
-	glGenBuffers(3, handle2);
-
-	indices2 = genIndices(1,1);
-	cout << "indices: ";
-
-	for(int i: indices2)
-	{
-		cout << i << ' ';
-	}
-	cout << endl;
-
-	int tmp[] = {0,0,1,0,0,1,1,1};
-
-	glBindBuffer(GL_ARRAY_BUFFER, handle2[0]);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), &tmp[0], GL_STATIC_DRAW);
-	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);  // Vertex position
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, handle2[1]);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), &tmp[0], GL_STATIC_DRAW);
-	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);  // UV position
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, handle2[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(GLuint), &indices2[0], GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-*/
+	return tmpVertexInfo;
 }
 
+
+GLfloat * initVertexColors(){
+	GLfloat * tmpVertexColor = (GLfloat *)malloc(imWidth * imHeight * 3 * sizeof(GLfloat)); //init memory for colors
+	return tmpVertexColor;
+}
 
 vector<int> genIndices(int picWidth, int picHeight){
 	vector<int> temp;
