@@ -232,7 +232,7 @@ int Init ( ESContext *esContext )
 			"varying vec4 v_Color;                               \n"
 			"void main()                                         \n"
 			"{                                                   \n"
-			"  gl_FragColor = v_Color;                           \n"
+			"  gl_FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);                           \n"
 			"}                                                   \n";
 
 	// Load the shaders and get a linked program object
