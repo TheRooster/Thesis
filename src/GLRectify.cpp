@@ -178,13 +178,6 @@ int main(int argc, char ** argv){
 
 void Draw ( ESContext *esContext )
 {
-
-	GLfloat vVertices[] = { -0.5f,  0.5f, 0.0f,  // Position 0
-	                        -0.5f, -0.5f, 0.0f,  // Position 1
-	                         0.5f, -0.5f, 0.0f,  // Position 2
-	                         0.5f,  0.5f, 0.0f,  // Position 3
-	                      };
-	GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
 	UserData *userData =(UserData *)(esContext->userData);
 
 	// Set the viewport
@@ -198,10 +191,10 @@ void Draw ( ESContext *esContext )
 
 	// Load the vertex position
 	glVertexAttribPointer ( userData->positionLoc, 4, GL_FLOAT,
-			GL_TRUE, 1, vVertices);
+			GL_TRUE, 1, Vertices);
 	// Load the texture coordinate
-	//glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
-	//		GL_FALSE, 1, colors);
+	glVertexAttribPointer ( userData->colorLoc, 3, GL_BYTE,
+			GL_FALSE, 1, colors);
 
 	glEnableVertexAttribArray ( userData->positionLoc );
 	//glEnableVertexAttribArray ( userData->colorLoc );
@@ -254,7 +247,7 @@ int Init ( ESContext *esContext )
 	glClearColor ( 0.39f, 0.58f, 0.92f, 1.0f );
 
 	vertices =init_VertexInfo();
-	//indices =genIndices(imWidth, imHeight);
+	indices =genIndices(imWidth, imHeight);
 	colors = init_VertexColors("res/left01.jpg");
 	return GL_TRUE;
 }
@@ -270,13 +263,16 @@ GLfloat * init_VertexInfo(){
 	for(int i = 0; i < imHeight; i ++){
 		for(int j = 0; j < imWidth * 4; j+=4){
 			int loc = (i*imWidth*4) + j;
-			tmpVertexInfo[loc] = (GLfloat)j/4;
-			tmpVertexInfo[loc + 1] = (GLfloat)i;
+			tmpVertexInfo[loc] = ((GLfloat)j/4) / imWidth;
+			tmpVertexInfo[loc + 1] = ((GLfloat)i )/ imHeight;
 			tmpVertexInfo[loc + 2] = 1.0f;
 			tmpVertexInfo[loc + 3] = 1.0f;
+			cout << '[' << tmpVertexInfo[loc] << ' '<< tmpVertexInfo[loc + 1] << ' ' << tmpVertexInfo[loc + 2] << ' ' << tmpVertexInfo[loc + 3] << ']'<< endl;
 		}
 
 	}
+
+
 	return tmpVertexInfo;
 }
 
