@@ -34,7 +34,7 @@ mat3x4 projection1;
 mat3x4 projection2;
 
 GLfloat * vertices;
-GLshort * colors;
+GLubyte * colors;
 GLuint * indices;
 int indicesCount = 0;
 
