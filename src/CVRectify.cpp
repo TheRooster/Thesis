@@ -160,7 +160,7 @@ int main(){
 		cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
 		imshow("Disparity Map", dispVis);
 		waitKey(0);
-	//}
+	}
 }
 
 void Init_SBM(){
