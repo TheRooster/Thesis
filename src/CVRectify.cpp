@@ -5,6 +5,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/ximgproc.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <fstream>
 
@@ -140,8 +141,9 @@ int main(){
 	Mat img1rectified, img2rectified, disp, dispVis;
 	namedWindow("Disparity Map", 1);
 
-	//while(true){
-			
+	while(true){
+		auto t1 = std::chrono::high_resolution_clock::now();
+
 		camera1image = imread("res/left02.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 		camera2image = imread("res/right02.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 		
@@ -150,6 +152,11 @@ int main(){
 
 		//Calc the Disparity map using Stereo BlockMatching
 		bm->compute(img1rectified, img2rectified, disp);
+
+		auto t2 = std::chrono::high_resolution_clock::now();
+
+		cout << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count() << endl;
+
 		cv::ximgproc::getDisparityVis(disp, dispVis, 1.0);
 		imshow("Disparity Map", dispVis);
 		waitKey(0);
